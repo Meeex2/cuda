@@ -21,4 +21,3 @@ Implemented array multiplication by writing a CUDA program. Explored how to laun
   - Freed device memory using `cudaFree`.
 - **Host Array Initialization:** Initialized arrays on the host and copied them to the device.
 - **Kernel Launch Configuration:** Configured the number of threads per block and the number of blocks per grid for kernel launch.
--
