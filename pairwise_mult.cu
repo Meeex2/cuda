@@ -2,7 +2,7 @@
 #include <iostream>
 
 // CUDA kernel function
-__global__ void addArrays(int *a, int *b, int *c, int n) {
+__global__ void multiplyArrays(int *a, int *b, int *c, int n) {
     int idx = threadIdx.x + blockIdx.x * blockDim.x;
     if (idx < n) {
         c[idx] = a[idx] * b[idx];
@@ -34,7 +34,7 @@ int main() {
     int threadsPerBlock = 256;
     int blocksPerGrid = (n + threadsPerBlock - 1) / threadsPerBlock;
 
-    addArrays<<<blocksPerGrid, threadsPerBlock>>>(d_a, d_b, d_c, n);
+    multiplyArrays<<<blocksPerGrid, threadsPerBlock>>>(d_a, d_b, d_c, n);
 
     cudaMemcpy(h_c, d_c, size, cudaMemcpyDeviceToHost);
 
