@@ -7,7 +7,7 @@ This document serves as documentaion of my learning journey of CUDA programming 
 [hkproj](https://github.com/hkproj/)
 
 ## Day 1
-**File:** `pairwise_mult.cu`
+**File:** `elementwise_mult.cu`
 
 ### Summary
 Implemented array multiplication by writing a CUDA program. Explored how to launch a kernel to perform a parallelized multiplication of two arrays, where each thread computes the product of a pair of values.
