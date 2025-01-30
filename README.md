@@ -21,3 +21,10 @@ Implemented array multiplication by writing a CUDA program. Explored how to laun
   - Freed device memory using `cudaFree`.
 - **Host Array Initialization:** Initialized arrays on the host and copied them to the device.
 - **Kernel Launch Configuration:** Configured the number of threads per block and the number of blocks per grid for kernel launch.
+
+## Day 2
+**File:** `relu.cu`
+
+### Summary
+Implemented the ReLU (Rectified Linear Unit) function using CUDA.
+Wrote a CUDA kernel to perform an element-wise ReLU operation on an array, where each thread computes the ReLU of a single element.
