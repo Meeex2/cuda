@@ -27,4 +27,5 @@ Implemented array multiplication by writing a CUDA program. Explored how to laun
 
 ### Summary
 Implemented the ReLU (Rectified Linear Unit) function using CUDA.
+
 Wrote a CUDA kernel to perform an element-wise ReLU operation on an array, where each thread computes the ReLU of a single element.
