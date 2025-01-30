@@ -23,7 +23,7 @@ Implemented array multiplication by writing a CUDA program. Explored how to laun
 - **Kernel Launch Configuration:** Configured the number of threads per block and the number of blocks per grid for kernel launch.
 
 ## Day 2
-**File:** `relu.cu`
+**File:** `ReLU.cu`
 
 ### Summary
 Implemented the ReLU (Rectified Linear Unit) function using CUDA.
