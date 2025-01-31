@@ -31,7 +31,7 @@ Implemented the ReLU (Rectified Linear Unit) function using CUDA.
 Wrote a CUDA kernel to perform an element-wise ReLU operation on an array, where each thread computes the ReLU of a single element.
 
 
-## Day 3 Challenge: Scalar Product (Dot Product)**
+## Day 3 Challenge
 
 **File:** `scalar_product.cu`
 
@@ -53,10 +53,16 @@ Implemented the scalar product (dot product) of two vectors using CUDA. Explored
 - **Kernel Launch Configuration:** Configured the number of threads per block and the number of blocks per grid for kernel launch.
 
 
-## **Day 4 Challenge: Matrix-Vector Product**
+## Day 4 Challenge
 
 **File:** `MatVec_prod.cu`
 
 
 ### **Summary**
 Implemented the matrix-vector product using CUDA. Explored how to launch a kernel to perform parallelized matrix-vector multiplication, where each thread computes the dot product of a row of the matrix with the vector. This builds on the concepts learned in previous challenges but extends them to handle matrix operations.
+
+**File:** `LeakyReLU.cu`
+
+
+### **Summary**
+Implemented the most basic LeakyReLU function (linear leak) using CUDA.
