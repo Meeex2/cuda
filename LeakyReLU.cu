@@ -1,4 +1,3 @@
-%%writefile LeakyReLU.cu
 #include <stdio.h>
 #include <cuda_runtime.h>
 __global__ void leakyReluKernel(float* data, int size, float alpha) {
