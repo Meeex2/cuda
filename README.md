@@ -51,3 +51,12 @@ Implemented the scalar product (dot product) of two vectors using CUDA. Explored
 - **Reduction Algorithm:** Implemented a parallel reduction to sum partial results computed by threads.
 - **Host Array Initialization:** Initialized arrays on the host and copied them to the device.
 - **Kernel Launch Configuration:** Configured the number of threads per block and the number of blocks per grid for kernel launch.
+
+
+## **Day 4 Challenge: Matrix-Vector Product**
+
+**File:** `MatVec_prod.cu`
+
+
+### **Summary**
+Implemented the matrix-vector product using CUDA. Explored how to launch a kernel to perform parallelized matrix-vector multiplication, where each thread computes the dot product of a row of the matrix with the vector. This builds on the concepts learned in previous challenges but extends them to handle matrix operations.
