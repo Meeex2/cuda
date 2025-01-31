@@ -29,3 +29,25 @@ Implemented array multiplication by writing a CUDA program. Explored how to laun
 Implemented the ReLU (Rectified Linear Unit) function using CUDA.
 
 Wrote a CUDA kernel to perform an element-wise ReLU operation on an array, where each thread computes the ReLU of a single element.
+
+
+## Day 3 Challenge: Scalar Product (Dot Product)**
+
+**File:** `scalar_product.cu`
+
+
+### Summary
+Implemented the scalar product (dot product) of two vectors using CUDA. Explored how to launch a kernel to perform parallelized multiplication and reduction, where each thread computes the product of a pair of values, and the results are summed up to produce the final scalar product.
+
+
+### Learned
+- **Basics of Writing a CUDA Kernel:** Understood the structure and syntax of a CUDA kernel function.
+- **Grid, Block, and Thread Hierarchy:** Explored the hierarchical organization of threads, blocks, and grids in CUDA.
+- **Device Memory Management:**
+  - Allocated device memory using `cudaMalloc`.
+  - Copied data between host and device using `cudaMemcpy`.
+  - Freed device memory using `cudaFree`.
+- **Shared Memory Usage:** Utilized shared memory for efficient reduction within a block.
+- **Reduction Algorithm:** Implemented a parallel reduction to sum partial results computed by threads.
+- **Host Array Initialization:** Initialized arrays on the host and copied them to the device.
+- **Kernel Launch Configuration:** Configured the number of threads per block and the number of blocks per grid for kernel launch.
