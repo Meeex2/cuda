@@ -1,4 +1,3 @@
-%%writefile scalar_product.cu
 #include <cuda_runtime.h>
 #include <iostream>
 #include <cmath>
