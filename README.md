@@ -66,3 +66,13 @@ Implemented the matrix-vector product using CUDA. Explored how to launch a kerne
 
 ### **Summary**
 Implemented the most basic LeakyReLU function (linear leak) using CUDA.
+
+## Day 5 Challenge
+
+**File:** `Mat_prod.cu`
+
+
+### **Summary**
+Implemented the matrix multiplication using CUDA. Explored how to launch a kernel to perform parallelized matrix-matrix multiplication use x and y axis of the grid and the blcoks, where each thread computes a coeffecient of the result matrix.
+
+
