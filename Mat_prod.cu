@@ -1,4 +1,3 @@
-%%writefile Mat_prod.cu
 #include <stdio.h>
 #include <cmath> 
 
