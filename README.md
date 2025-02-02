@@ -67,6 +67,7 @@ Implemented the matrix-vector product using CUDA. Explored how to launch a kerne
 ### **Summary**
 Implemented the most basic LeakyReLU function (linear leak) using CUDA.
 
+
 ## Day 5 Challenge
 
 **File:** `Mat_prod.cu`
@@ -74,5 +75,44 @@ Implemented the most basic LeakyReLU function (linear leak) using CUDA.
 
 ### **Summary**
 Implemented the matrix multiplication using CUDA. Explored how to launch a kernel to perform parallelized matrix-matrix multiplication use x and y axis of the grid and the blcoks, where each thread computes a coeffecient of the result matrix.
+
+
+## Day 6 Challenge
+
+**File:** `imageBlur.cu`
+
+
+### **Summary**
+Implemented the matrix multiplication using CUDA. Explored how to launch a kernel to perform parallelized matrix-matrix multiplication use x and y axis of the grid and the blcoks, where each thread computes a coeffecient of the result matrix.
+
+
+### **Day 5 Challenge: Image Blurring with CUDA**
+
+**File:** `image_blur.cu`
+
+
+### **Summary**
+Implemented image blurring using CUDA. Explored how to perform a **convolution operation** on an image using a Gaussian blur kernel. Each thread computes one pixel of the output image by applying the kernel to the corresponding neighborhood in the input image.
+
+
+### **Key Concepts**
+1. **Basics of Image Convolution**:
+   - Understood how convolution works for image processing, where each pixel in the output image is a weighted sum of its neighborhood in the input image.
+   - Applied a **Gaussian blur kernel** to smooth the image.
+
+2. **CUDA Kernel for Image Processing**:
+   - Wrote a CUDA kernel to parallelize the convolution operation.
+   - Each thread computes one pixel of the output image, ensuring efficient use of GPU resources.
+
+3. **Handling Edge Cases**:
+   - Implemented **clamping** to handle edge pixels, ensuring the kernel does not access out-of-bounds memory.
+
+4. **Grid and Block Configuration**:
+   - Configured the number of threads per block and the number of blocks per grid to cover the entire image.
+   - Used 2D thread blocks and grids to match the 2D nature of images.
+
+5. **Verification and Debugging**:
+   - Verified the correctness of the output by manually computing the expected value of a pixel and comparing it with the GPU result.
+   - Printed a small portion of the output image for visual inspection.
 
 
