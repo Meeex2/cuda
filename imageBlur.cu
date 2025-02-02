@@ -1,4 +1,3 @@
-%%writefile imageBlur.cu
 #include <stdio.h>
 #include <stdlib.h>
 
