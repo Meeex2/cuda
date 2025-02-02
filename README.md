@@ -77,7 +77,7 @@ Implemented the most basic LeakyReLU function (linear leak) using CUDA.
 Implemented the matrix multiplication using CUDA. Explored how to launch a kernel to perform parallelized matrix-matrix multiplication use x and y axis of the grid and the blcoks, where each thread computes a coeffecient of the result matrix.
 
 
-## Day 6 Challenge
+## Day 5 Challenge
 
 **File:** `imageBlur.cu`
 
@@ -86,7 +86,7 @@ Implemented the matrix multiplication using CUDA. Explored how to launch a kerne
 Implemented the matrix multiplication using CUDA. Explored how to launch a kernel to perform parallelized matrix-matrix multiplication use x and y axis of the grid and the blcoks, where each thread computes a coeffecient of the result matrix.
 
 
-### **Day 5 Challenge: Image Blurring with CUDA**
+## Day 6 Challenge: Image Blurring with CUDA
 
 **File:** `image_blur.cu`
 
