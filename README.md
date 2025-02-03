@@ -31,7 +31,7 @@ Implemented the ReLU (Rectified Linear Unit) function using CUDA.
 Wrote a CUDA kernel to perform an element-wise ReLU operation on an array, where each thread computes the ReLU of a single element.
 
 
-## Day 3 Challenge
+## Day 3
 
 **File:** `scalar_product.cu`
 
@@ -53,7 +53,7 @@ Implemented the scalar product (dot product) of two vectors using CUDA. Explored
 - **Kernel Launch Configuration:** Configured the number of threads per block and the number of blocks per grid for kernel launch.
 
 
-## Day 4 Challenge
+## Day 4
 
 **File:** `MatVec_prod.cu`
 
@@ -68,7 +68,7 @@ Implemented the matrix-vector product using CUDA. Explored how to launch a kerne
 Implemented the most basic LeakyReLU function (linear leak) using CUDA.
 
 
-## Day 5 Challenge
+## Day 5
 
 **File:** `Mat_prod.cu`
 
@@ -77,16 +77,8 @@ Implemented the most basic LeakyReLU function (linear leak) using CUDA.
 Implemented the matrix multiplication using CUDA. Explored how to launch a kernel to perform parallelized matrix-matrix multiplication use x and y axis of the grid and the blcoks, where each thread computes a coeffecient of the result matrix.
 
 
-## Day 5 Challenge
 
-**File:** `imageBlur.cu`
-
-
-### **Summary**
-Implemented the matrix multiplication using CUDA. Explored how to launch a kernel to perform parallelized matrix-matrix multiplication use x and y axis of the grid and the blcoks, where each thread computes a coeffecient of the result matrix.
-
-
-## Day 6 Challenge: Image Blurring with CUDA
+## Day 6 
 
 **File:** `image_blur.cu`
 
