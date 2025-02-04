@@ -133,9 +133,7 @@ Implemented the **softmax function** using CUDA. The softmax function is widely 
 1. **Softmax Formula**:
    - The softmax probability for the \(i\)-th element is given by:
      $$
-     \[
      \text{softmax}(x_i) = \frac{e^{x_i}}{\sum_{j=1}^{n} e^{x_j}}
-     \]
      $$
    - This involves computing the exponential of each element and normalizing by the sum of all exponentials.
 
