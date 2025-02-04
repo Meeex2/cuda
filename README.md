@@ -121,3 +121,35 @@ Implemented max pooling using CUDA. Explored how to perform a **downsampling ope
    - Verified the correctness of the output by manually computing the expected maximum value for a specific window and comparing it with the GPU result.
    - Printed a small portion of the output feature map for visual inspection.
 
+## Day 8
+**Files:** `softmax.cu`, `softmax_v2.cu`
+
+### **Summary**
+Implemented the **softmax function** using CUDA. The softmax function is widely used in machine learning to convert a vector of raw scores (logits) into probabilities. Two versions were implemented:
+1. **Basic Softmax**: A straightforward implementation using global memory.
+2. **Advanced Softmax**: An optimized implementation using **shared memory** for efficient reduction and normalization.
+
+### **Key Concepts**
+1. **Softmax Formula**:
+   - The softmax probability for the \(i\)-th element is given by:
+     \[
+     \text{softmax}(x_i) = \frac{e^{x_i}}{\sum_{j=1}^{n} e^{x_j}}
+     \]
+   - This involves computing the exponential of each element and normalizing by the sum of all exponentials.
+
+2. **Basic Softmax**:
+   - Each thread computes the exponential of one element of the input vector.
+   - The sum of exponentials is computed on the host, and a second kernel normalizes the values.
+
+3. **Advanced Softmax**:
+   - Uses **shared memory** to perform parallel reduction for computing the sum of exponentials.
+   - The reduction kernel efficiently sums the exponentials in parallel, reducing global memory access.
+   - The normalization kernel divides each exponential value by the computed sum.
+
+4. **Shared Memory**:
+   - Shared memory is used to store intermediate results during the reduction process.
+   - This reduces the number of global memory accesses and improves performance.
+
+5. **Error Checking**:
+   - Added a `CUDA_CHECK` macro to validate CUDA API calls and catch errors early.
+   - Implemented a `testSoftmax` function to verify that the softmax probabilities sum to 1.0 and are within the valid range [0, 1].
