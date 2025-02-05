@@ -153,3 +153,35 @@ Implemented the **softmax function** using CUDA. The softmax function is widely 
 5. **Error Checking**:
    - Added a `CUDA_CHECK` macro to validate CUDA API calls and catch errors early.
    - Implemented a `testSoftmax` function to verify that the softmax probabilities sum to 1.0 and are within the valid range [0, 1].
+  
+
+## Day 9
+**File:** `attention.cu`
+
+### **Summary**
+Implemented the **attention mechanism** using CUDA. The attention mechanism is a key component in modern neural networks, particularly in transformers. It involves computing attention scores between queries and keys, applying softmax, and then using these scores to weight the values.
+
+### **Key Concepts**
+1. **Attention Mechanism**:
+   - The attention mechanism computes a weighted sum of values, where the weights are determined by the compatibility of queries and keys.
+   - The formula for attention is:
+     
+     $\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d}}\right)V$
+     
+   - Here, \(Q\), \(K\), and \(V\) are the query, key, and value matrices, and \(d\) is the dimensionality of the keys.
+
+2. **CUDA Kernel for Attention Scores**:
+   - Each thread computes the dot product between a query and a key, scaled by \(\sqrt{d}\).
+   - The results are stored in an attention scores matrix.
+
+3. **Softmax Application**:
+   - The softmax function is applied to the attention scores to convert them into probabilities.
+   - This ensures that the attention weights sum to 1.
+
+4. **Weighted Sum of Values**:
+   - Each thread computes the weighted sum of values using the attention scores.
+   - The result is stored in the output matrix.
+
+5. **Verification**:
+   - Verified the correctness of the implementation by manually computing the expected output for a specific element and comparing it with the GPU result.
+
