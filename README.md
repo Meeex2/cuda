@@ -171,7 +171,7 @@ Implemented the **attention mechanism** using CUDA. The attention mechanism is a
    - Here, \(Q\), \(K\), and \(V\) are the query, key, and value matrices, and \(d\) is the dimensionality of the keys.
 
 2. **CUDA Kernel for Attention Scores**:
-   - Each thread computes the dot product between a query and a key, scaled by \(\$sqrt{d}$\).
+   - Each thread computes the dot product between a query and a key, scaled by $\(\sqrt{d}\)$.
    - The results are stored in an attention scores matrix.
 
 3. **Softmax Application**:
