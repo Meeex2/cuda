@@ -56,3 +56,51 @@ __global__ void flashAttentionKernel(const float* Q, const float* K, const float
         output[row * dim + col] = out_val;
     }
 }
+
+
+int main() {
+    int seqLen = SEQ_LEN;
+    int dim = DIM;
+    size_t matrixSize = seqLen * dim * sizeof(float);
+    
+    float *h_Q = (float*)malloc(matrixSize);
+    float *h_K = (float*)malloc(matrixSize);
+    float *h_V = (float*)malloc(matrixSize);
+    float *h_output = (float*)malloc(matrixSize);
+    
+    for (int i = 0; i < seqLen * dim; i++) {
+        h_Q[i] = static_cast<float>(rand()) / RAND_MAX;
+        h_K[i] = static_cast<float>(rand()) / RAND_MAX;
+        h_V[i] = static_cast<float>(rand()) / RAND_MAX;
+    }
+    
+    float *d_Q, *d_K, *d_V, *d_output;
+    cudaMalloc(&d_Q, matrixSize);
+    cudaMalloc(&d_K, matrixSize);
+    cudaMalloc(&d_V, matrixSize);
+    cudaMalloc(&d_output, matrixSize);
+    
+    cudaMemcpy(d_Q, h_Q, matrixSize, cudaMemcpyHostToDevice);
+    cudaMemcpy(d_K, h_K, matrixSize, cudaMemcpyHostToDevice);
+    cudaMemcpy(d_V, h_V, matrixSize, cudaMemcpyHostToDevice);
+    
+    dim3 threadsPerBlock(TILE_SIZE, TILE_SIZE);
+    dim3 blocksPerGrid((dim + TILE_SIZE - 1) / TILE_SIZE, (seqLen + TILE_SIZE - 1) / TILE_SIZE);
+    
+    flashAttentionKernel<<<blocksPerGrid, threadsPerBlock>>>(d_Q, d_K, d_V, d_output, seqLen, dim);
+    
+    cudaMemcpy(h_output, d_output, matrixSize, cudaMemcpyDeviceToHost);
+    
+    printf("Output matrix element at (0, 0): %f\n", h_output[0]);
+    
+    cudaFree(d_Q);
+    cudaFree(d_K);
+    cudaFree(d_V);
+    cudaFree(d_output);
+    
+    free(h_Q);
+    free(h_K);
+    free(h_V);
+    free(h_output);
+    return 0;
+}
