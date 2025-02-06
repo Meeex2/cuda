@@ -1,4 +1,3 @@
-%%writefile flash_attention.cu
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
