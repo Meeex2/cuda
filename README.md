@@ -185,3 +185,24 @@ Implemented the **attention mechanism** using CUDA. The attention mechanism is a
 5. **Verification**:
    - Verified the correctness of the implementation by manually computing the expected output for a specific element and comparing it with the GPU result.
 
+## Day 10
+**File:** `flash_attention.cu`
+
+### **Summary**
+Implemented the **Flash Attention mechanism** using CUDA. Flash Attention is an optimized version of the standard attention mechanism that reduces memory usage and improves computational efficiency by tiling the computation and avoiding redundant memory accesses. This implementation is still a work in progress and may produce incorrect outputs.
+
+### **Key Concepts**
+1. **Flash Attention**:
+   - Flash Attention computes attention scores in a memory-efficient way by tiling the input matrices and processing them in chunks.
+   - It avoids storing the full attention matrix, reducing memory overhead.
+
+2. **Tiling**:
+   - The input matrices `Q`, `K`, and `V` are divided into smaller tiles that fit into shared memory.
+   - Each thread block processes one tile at a time, computing partial results.
+
+3. **Online Softmax**:
+   - Softmax is computed incrementally across tiles to avoid storing the full attention matrix.
+   - This requires tracking the maximum value and sum of exponentials across tiles.
+
+4. **Weighted Sum**:
+   - The weighted sum of values is computed incrementally using the attention scores.
