@@ -206,3 +206,18 @@ Implemented the **Flash Attention mechanism** using CUDA. Flash Attention is an 
 
 4. **Weighted Sum**:
    - The weighted sum of values is computed incrementally using the attention scores.
+
+## Day 11
+**File:** `tanh.cu`
+
+### Summary
+Implemented the hyperbolic tangent (tanh) function using CUDA. Wrote a CUDA kernel to perform an element-wise tanh operation on an array, where each thread computes the tanh of a single element.
+
+### Learned
+- **Element-wise Operations:** Understood how to implement element-wise mathematical functions using CUDA.
+- **Kernel Launch Configuration:** Configured the number of threads per block and the number of blocks per grid for efficient parallel execution.
+- **Device Memory Management:**
+   - Allocated device memory using `cudaMalloc`.
+   - Copied data between host and device using `cudaMemcpy`.
+   - Freed device memory using `cudaFree`.
+- **Verification:** Compared the results computed by the device with those computed by the host to ensure correctness.
