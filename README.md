@@ -221,3 +221,30 @@ Implemented the hyperbolic tangent (tanh) function using CUDA. Wrote a CUDA kern
    - Copied data between host and device using `cudaMemcpy`.
    - Freed device memory using `cudaFree`.
 - **Verification:** Compared the results computed by the device with those computed by the host to ensure correctness.
+
+## Day 12
+**File:** `flash_attention_v2.cu`
+
+### Summary
+Implemented an initial version of the Flash Attention mechanism using CUDA, building on the concepts from Day 10. This version does not yet include tiling, which will be implemented later. The goal is to optimize memory usage and computational efficiency by avoiding redundant memory accesses.
+
+### Key Concepts
+1. **Flash Attention**:
+    - Flash Attention computes attention scores in a memory-efficient way by processing input matrices in chunks.
+    - This version focuses on the basic implementation without tiling.
+
+2. **Attention Scores**:
+    - Each thread computes the dot product between a query and a key, scaled by $\sqrt{d}$.
+    - The results are stored in an attention scores matrix.
+
+3. **Softmax Application**:
+    - The softmax function is applied to the attention scores to convert them into probabilities.
+    - This ensures that the attention weights sum to 1.
+
+4. **Weighted Sum of Values**:
+    - Each thread computes the weighted sum of values using the attention scores.
+    - The result is stored in the output matrix.
+
+5. **Future Work**:
+    - Implement tiling to further optimize memory usage and computational efficiency.
+    - Verify the correctness of the implementation by comparing the results with those from the standard attention mechanism.
