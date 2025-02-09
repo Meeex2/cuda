@@ -248,3 +248,33 @@ Implemented an initial version of the Flash Attention mechanism using CUDA, buil
 5. **Future Work**:
     - Implement tiling to further optimize memory usage and computational efficiency.
     - Verify the correctness of the implementation by comparing the results with those from the standard attention mechanism.
+
+## Day 13
+**File:** `GELU.cu`
+
+### Summary
+Implemented the GELU (Gaussian Error Linear Unit) activation function using CUDA. The GELU function is used in neural networks to introduce non-linearity. This implementation includes both a CUDA kernel and a CPU version for comparison.
+
+### Key Concepts
+1. **GELU Activation Function**:
+   - The GELU function is defined as:
+     
+     $\text{GELU}(x) = x \cdot 0.5 \cdot (1 + \tanh(\sqrt{2/\pi} \cdot (x + 0.044715 \cdot x^3)))$
+     
+   - It smoothly approximates the ReLU function and is used in various deep learning models.
+
+2. **CUDA Kernel for GELU**:
+   - Each thread computes the GELU activation for a single element of the input array.
+   - The results are stored in the output array.
+
+3. **CPU Implementation**:
+   - A CPU version of the GELU function is implemented for comparison with the GPU results.
+   - This helps in verifying the correctness of the CUDA implementation.
+
+4. **Performance Comparison**:
+   - Measured the execution time of both the CPU and GPU implementations.
+   - Compared the results to ensure they match and evaluated the speedup achieved by using the GPU.
+
+5. **Future Work**:
+   - Optimize the CUDA kernel for better performance.
+   - Explore other activation functions and their CUDA implementations.
