@@ -131,7 +131,7 @@ Implemented the **softmax function** using CUDA. The softmax function is widely 
 
 ### **Key Concepts**
 1. **Softmax Formula**:
-   - The softmax probability for the \(i\)-th element is given by:
+   - The softmax probability for the $i$-th element is given by:
      
      $\text{softmax}(x_i) = \frac{e^{x_i}}{\sum_{j=1}^{n} e^{x_j}}$
      
@@ -168,10 +168,10 @@ Implemented the **attention mechanism** using CUDA. The attention mechanism is a
      
      $\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d}}\right)V$
      
-   - Here, \(Q\), \(K\), and \(V\) are the query, key, and value matrices, and \(d\) is the dimensionality of the keys.
+   - Here, $Q$, $K$, and $V$ are the query, key, and value matrices, and $d$ is the dimensionality of the keys.
 
 2. **CUDA Kernel for Attention Scores**:
-   - Each thread computes the dot product between a query and a key, scaled by $\(\sqrt{d}\)$.
+   - Each thread computes the dot product between a query and a key, scaled by $\sqrt{d}$.
    - The results are stored in an attention scores matrix.
 
 3. **Softmax Application**:
@@ -278,3 +278,33 @@ Implemented the GELU (Gaussian Error Linear Unit) activation function using CUDA
 5. **Future Work**:
    - Optimize the CUDA kernel for better performance.
    - Explore other activation functions and their CUDA implementations.
+   ## Day 14
+   **File:** `batchnorm.cu`
+
+   ### Summary
+   Implemented batch normalization using CUDA. Batch normalization is a technique to improve the training of deep neural networks by normalizing the inputs of each layer. This implementation includes both a CUDA kernel and a CPU version for comparison.
+
+   ### Key Concepts
+   1. **Batch Normalization**:
+      - Batch normalization normalizes the input to a layer by subtracting the mean and dividing by the standard deviation, followed by scaling and shifting.
+      - The formula for batch normalization is:
+        
+        $\text{BN}(x) = \gamma \cdot \frac{x - \mu}{\sqrt{\sigma^2 + \epsilon}} + \beta$
+        
+      - Here, $ \mu $ is the mean, $ \sigma^2 $ is the variance, $ \epsilon $ is a small constant to avoid division by zero, $ \gamma $ is the scale parameter, and $ \beta $ is the shift parameter.
+
+   2. **CUDA Kernel for Batch Normalization**:
+      - Each thread computes the normalized value for a single element of the input array.
+      - The results are scaled and shifted using the $ \gamma $ and $ \beta $ parameters and stored in the output array.
+
+   3. **CPU Implementation**:
+      - A CPU version of the batch normalization function is implemented for comparison with the GPU results.
+      - This helps in verifying the correctness of the CUDA implementation.
+
+   4. **Performance Comparison**:
+      - Measured the execution time of both the CPU and GPU implementations.
+      - Compared the results to ensure they match and evaluated the speedup achieved by using the GPU.
+
+   5. **Future Work**:
+      - Optimize the CUDA kernel for better performance.
+      - Explore other normalization techniques and their CUDA implementations.
