@@ -278,7 +278,8 @@ Implemented the GELU (Gaussian Error Linear Unit) activation function using CUDA
 5. **Future Work**:
    - Optimize the CUDA kernel for better performance.
    - Explore other activation functions and their CUDA implementations.
-   ## Day 14
+   
+## Day 14
    **File:** `batchnorm.cu`
 
    ### Summary
@@ -308,3 +309,36 @@ Implemented the GELU (Gaussian Error Linear Unit) activation function using CUDA
    5. **Future Work**:
       - Optimize the CUDA kernel for better performance.
       - Explore other normalization techniques and their CUDA implementations.
+
+## Day 15
+**File:** `flash_attention_v3.cu`
+
+### Summary
+Implemented an advanced version of the Flash Attention mechanism using CUDA. This version includes tiling and shared memory optimizations to further reduce memory usage and improve computational efficiency.
+
+### Key Concepts
+1. **Flash Attention**:
+    - Flash Attention computes attention scores in a memory-efficient way by tiling the input matrices and processing them in chunks.
+    - It avoids storing the full attention matrix, reducing memory overhead.
+
+2. **Tiling and Shared Memory**:
+    - The input matrices `Q`, `K`, and `V` are divided into smaller tiles that fit into shared memory.
+    - Each thread block processes one tile at a time, computing partial results.
+    - Shared memory is used to store intermediate results, reducing global memory accesses.
+
+3. **Online Softmax**:
+    - Softmax is computed incrementally across tiles to avoid storing the full attention matrix.
+    - This requires tracking the maximum value and sum of exponentials across tiles.
+
+4. **Weighted Sum**:
+    - The weighted sum of values is computed incrementally using the attention scores.
+    - Each thread computes the weighted sum of values using the attention scores and stores the result in the output matrix.
+
+5. **Performance Comparison**:
+    - Measured the execution time of the advanced Flash Attention implementation.
+    - Compared the results with previous versions to evaluate the performance improvements.
+    - Verified the correctness of the implementation by comparing the results with those from the standard attention mechanism.
+
+6. **Future Work**:
+    - Further optimize the CUDA kernel for better performance.
+    - Explore other attention mechanisms and their CUDA implementations.
