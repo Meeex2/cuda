@@ -134,3 +134,48 @@ void compute_flash_attention(
     flash_attention_forward<<<grid_dim, block_dim>>>( Q, K, V, O, seq_len, scale );
     CUDA_CHECK(cudaDeviceSynchronize());
 }
+
+void compute_attention_cpu(
+    const float* Q, const float* K, const float* V, float* O,
+    int batch_size, int num_heads, int seq_len, int head_dim
+) {
+    float scale = 1.0f / sqrtf(static_cast<float>(head_dim));
+    
+    for (int b = 0; b < batch_size; b++) {
+        for (int h = 0; h < num_heads; h++) {
+            
+            for (int i = 0; i < seq_len; i++) {
+                
+                float max_val = -INFINITY;
+                std::vector<float> scores(seq_len, 0.0f);
+                for (int j = 0; j < seq_len; j++) {
+                    float s = 0.0f;
+                    for (int d = 0; d < head_dim; d++) {
+                        int idx_q = ((b * num_heads + h) * seq_len + i) * head_dim + d;
+                        int idx_k = ((b * num_heads + h) * seq_len + j) * head_dim + d;
+                        s += Q[idx_q] * K[idx_k];
+                    }
+                    s *= scale;
+                    scores[j] = s;
+                    if (s > max_val) max_val = s;
+                }
+                
+                float sum_exp = 0.0f;
+                for (int j = 0; j < seq_len; j++) {
+                    scores[j] = expf(scores[j] - max_val);
+                    sum_exp += scores[j];
+                }
+                
+                for (int d = 0; d < head_dim; d++) {
+                    float out = 0.0f;
+                    for (int j = 0; j < seq_len; j++) {
+                        int idx_v = ((b * num_heads + h) * seq_len + j) * head_dim + d;
+                        out += (scores[j] / sum_exp) * V[idx_v];
+                    }
+                    int idx_o = ((b * num_heads + h) * seq_len + i) * head_dim + d;
+                    O[idx_o] = out;
+                }
+            }
+        }
+    }
+}
