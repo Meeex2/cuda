@@ -179,3 +179,89 @@ void compute_attention_cpu(
         }
     }
 }
+
+int main() {
+    
+    const int batch_size = 2;
+    const int num_heads = 4;
+    const int seq_len = 128;   
+    const int head_dim = HEAD_DIM;  
+    const float scale = 1.0f / sqrtf(static_cast<float>(head_dim));
+
+    
+    size_t total_elems = static_cast<size_t>(batch_size) * num_heads * seq_len * head_dim;
+    size_t bytes = total_elems * sizeof(float);
+
+    
+    std::vector<float> h_Q(total_elems);
+    std::vector<float> h_K(total_elems);
+    std::vector<float> h_V(total_elems);
+    std::vector<float> h_O_gpu(total_elems, 0.0f);
+    std::vector<float> h_O_cpu(total_elems, 0.0f);
+
+    
+    std::srand(0);
+    for (size_t i = 0; i < total_elems; i++) {
+        h_Q[i] = static_cast<float>(std::rand()) / RAND_MAX;
+        h_K[i] = static_cast<float>(std::rand()) / RAND_MAX;
+        h_V[i] = static_cast<float>(std::rand()) / RAND_MAX;
+    }
+
+    
+    float *d_Q, *d_K, *d_V, *d_O;
+    CUDA_CHECK(cudaMalloc(&d_Q, bytes));
+    CUDA_CHECK(cudaMalloc(&d_K, bytes));
+    CUDA_CHECK(cudaMalloc(&d_V, bytes));
+    CUDA_CHECK(cudaMalloc(&d_O, bytes));
+
+    CUDA_CHECK(cudaMemcpy(d_Q, h_Q.data(), bytes, cudaMemcpyHostToDevice));
+    CUDA_CHECK(cudaMemcpy(d_K, h_K.data(), bytes, cudaMemcpyHostToDevice));
+    CUDA_CHECK(cudaMemcpy(d_V, h_V.data(), bytes, cudaMemcpyHostToDevice));
+    
+    compute_flash_attention(d_Q, d_K, d_V, d_O, batch_size, num_heads, seq_len, head_dim);
+
+    cudaEvent_t start, stop;
+    CUDA_CHECK(cudaEventCreate(&start));
+    CUDA_CHECK(cudaEventCreate(&stop));
+    int num_runs = 10;
+    CUDA_CHECK(cudaEventRecord(start));
+    for (int i = 0; i < num_runs; i++) {
+        compute_flash_attention(d_Q, d_K, d_V, d_O, batch_size, num_heads, seq_len, head_dim);
+    }
+    CUDA_CHECK(cudaEventRecord(stop));
+    CUDA_CHECK(cudaEventSynchronize(stop));
+    float gpu_time = 0;
+    CUDA_CHECK(cudaEventElapsedTime(&gpu_time, start, stop));
+    gpu_time /= num_runs;  
+
+    
+    CUDA_CHECK(cudaMemcpy(h_O_gpu.data(), d_O, bytes, cudaMemcpyDeviceToHost));
+
+    auto cpu_start = std::chrono::high_resolution_clock::now();
+    compute_attention_cpu(h_Q.data(), h_K.data(), h_V.data(), h_O_cpu.data(), batch_size, num_heads, seq_len, head_dim);
+    auto cpu_end = std::chrono::high_resolution_clock::now();
+    double cpu_time = std::chrono::duration<double, std::milli>(cpu_end - cpu_start).count();
+
+    double max_diff = 0.0;
+    double l2_diff = 0.0;
+    for (size_t i = 0; i < total_elems; i++) {
+        double diff = std::abs(h_O_cpu[i] - h_O_gpu[i]);
+        if (diff > max_diff) max_diff = diff;
+        l2_diff += diff * diff;
+    }
+    l2_diff = std::sqrt(l2_diff);
+
+    std::cout << "Average GPU time per run: " << gpu_time << " ms" << std::endl;
+    std::cout << "CPU time: " << cpu_time << " ms" << std::endl;
+    std::cout << "Max absolute difference between CPU and GPU: " << max_diff << std::endl;
+    std::cout << "L2 norm of differences: " << l2_diff << std::endl;
+
+    CUDA_CHECK(cudaFree(d_Q));
+    CUDA_CHECK(cudaFree(d_K));
+    CUDA_CHECK(cudaFree(d_V));
+    CUDA_CHECK(cudaFree(d_O));
+    CUDA_CHECK(cudaEventDestroy(start));
+    CUDA_CHECK(cudaEventDestroy(stop));
+
+    return 0;
+}
