@@ -342,3 +342,38 @@ Implemented an advanced version of the Flash Attention mechanism using CUDA. Thi
 6. **Future Work**:
     - Further optimize the CUDA kernel for better performance.
     - Explore other attention mechanisms and their CUDA implementations.
+
+## Day 16
+**File:** `conv2dtranspose.cu`
+
+### Summary
+Implemented the transposed convolution (also known as deconvolution) operation using CUDA. This operation is commonly used in neural networks for tasks such as image generation and upsampling.
+
+### Key Concepts
+1. **Transposed Convolution**:
+   - The transposed convolution operation is used to upsample an input feature map.
+   - It involves reversing the forward and backward passes of a standard convolution.
+
+2. **CUDA Kernel for Transposed Convolution**:
+   - Each thread computes the value of a single element in the output feature map.
+   - The kernel iterates over the input feature map and the convolution kernel to compute the output values.
+
+3. **Handling Stride and Padding**:
+   - Implemented stride and padding to control the spatial dimensions of the output feature map.
+   - Ensured that the kernel handles edge cases correctly to avoid accessing out-of-bounds memory.
+
+4. **CPU Implementation**:
+   - A CPU version of the transposed convolution function is implemented for comparison with the GPU results.
+   - This helps in verifying the correctness of the CUDA implementation.
+
+5. **Performance Comparison**:
+   - Measured the execution time of both the CPU and GPU implementations.
+   - Compared the results to ensure they match and evaluated the speedup achieved by using the GPU.
+
+6. **Verification and Debugging**:
+   - Verified the correctness of the output by comparing the results with those computed by the CPU.
+   - Printed a small portion of the output feature map for visual inspection.
+
+7. **Future Work**:
+   - Optimize the CUDA kernel for better performance.
+   - Explore other convolution operations and their CUDA implementations.
