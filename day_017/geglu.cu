@@ -18,3 +18,16 @@ __global__ void geglu_kernel(const float* input, float* output, int num_elements
     output[idx] = gelu * y;
 }
 
+void geglu_cpu(const float* input, float* output, int num_elements) {
+    const int half_dim = num_elements / 2;
+    for (int i = 0; i < half_dim; ++i) {
+        const float x = input[i];
+        const float y = input[i + half_dim];
+        
+        
+        const float gelu = x * 0.5f * (1.0f + std::tanh(1.702f * x));
+        
+        output[i] = gelu * y;
+    }
+}
+
