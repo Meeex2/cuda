@@ -377,3 +377,38 @@ Implemented the transposed convolution (also known as deconvolution) operation u
 7. **Future Work**:
    - Optimize the CUDA kernel for better performance.
    - Explore other convolution operations and their CUDA implementations.
+
+## Day 17
+**File:** `geglu.cu`
+
+### Summary
+Implemented the GEGLU (Gated Linear Unit with GELU activation) operation using CUDA. This operation is used in neural networks to introduce non-linearity and gating mechanisms.
+
+### Key Concepts
+1. **GEGLU Activation Function**:
+   - The GEGLU function combines the GELU activation with a gating mechanism.
+   - The formula for GEGLU is:
+     
+     $\text{GEGLU}(x, y) = \text{GELU}(x) \cdot y$
+     
+   - Here, $x$ and $y$ are the input tensors, and GELU is the Gaussian Error Linear Unit activation function.
+
+2. **CUDA Kernel for GEGLU**:
+   - Each thread computes the GEGLU activation for a pair of elements from the input arrays.
+   - The results are stored in the output array.
+
+3. **CPU Implementation**:
+   - A CPU version of the GEGLU function is implemented for comparison with the GPU results.
+   - This helps in verifying the correctness of the CUDA implementation.
+
+4. **Performance Comparison**:
+   - Measured the execution time of both the CPU and GPU implementations.
+   - Compared the results to ensure they match and evaluated the speedup achieved by using the GPU.
+
+5. **Verification and Debugging**:
+   - Verified the correctness of the output by comparing the results with those computed by the CPU.
+   - Printed a small portion of the output array for visual inspection.
+
+6. **Future Work**:
+   - Optimize the CUDA kernel for better performance.
+   - Explore other gating mechanisms and their CUDA implementations.
