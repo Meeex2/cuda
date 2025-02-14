@@ -412,3 +412,25 @@ Implemented the GEGLU (Gated Linear Unit with GELU activation) operation using C
 6. **Future Work**:
    - Optimize the CUDA kernel for better performance.
    - Explore other gating mechanisms and their CUDA implementations.
+
+## Day 18
+**File:** `swiglu.cu`
+
+### Summary
+Implemented the SwiGLU (Swish Gated Linear Unit) operation using CUDA. This operation is used in neural networks to introduce non-linearity and gating mechanisms, combining the Swish activation function with a gating mechanism. The file is a work on progress and can output incorrect results.
+
+### Key Concepts
+1. **SwiGLU Activation Function**:
+   - The SwiGLU function combines the Swish activation with a gating mechanism.
+   - The formula for SwiGLU is:
+     
+     $\text{SwiGLU}(x, y) = \text{Swish}(x) \cdot y$
+     
+   - Here, $x$ and $y$ are the input tensors, and Swish is the activation function defined as $x \cdot \text{sigmoid}(\beta x)$.
+
+2. **CUDA Kernel for SwiGLU**:
+   - Each thread computes the SwiGLU activation for a pair of elements from the input arrays.
+   - The results are stored in the output array.
+
+3. **CPU Implementation**:
+   - A CPU version of the SwiGLU function is implemented for comparison with the GPU results.
