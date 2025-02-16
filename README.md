@@ -434,3 +434,49 @@ Implemented the SwiGLU (Swish Gated Linear Unit) operation using CUDA. This oper
 
 3. **CPU Implementation**:
    - A CPU version of the SwiGLU function is implemented for comparison with the GPU results.
+
+## Day 19
+**File:** `inverse_matrix.cu`
+
+### Summary
+Implemented matrix inversion using CUDA. This operation is essential in various numerical and scientific computations. The implementation includes both a CUDA kernel and a CPU version for comparison.
+
+### Key Concepts
+1. **Matrix Inversion**:
+   - Matrix inversion involves finding a matrix that, when multiplied with the original matrix, yields the identity matrix.
+   - The process includes augmenting the matrix with the identity matrix, performing row operations to convert the original matrix to the identity matrix, and applying the same operations to the augmented part to obtain the inverse.
+
+2. **CUDA Kernels for Matrix Inversion**:
+   - **Initialization Kernel**: Initializes the augmented matrix with the original matrix and the identity matrix.
+   - **Row Swap Kernel**: Swaps rows to ensure numerical stability.
+   - **Normalization Kernel**: Normalizes the pivot row.
+   - **Elimination Kernel**: Eliminates the current column in other rows.
+
+3. **Performance Comparison**:
+   - Measured the execution time of both the CPU and GPU implementations.
+   - Compared the results to ensure they match and evaluated the speedup achieved by using the GPU.
+
+### Results
+- **Matrix Size: 256x256**
+  - Max Error: 4.27751e-06
+  - CPU Time: 0.146624 s
+  - GPU Time: 0.0140411 s
+  - Speedup: 10.4425x
+
+- **Matrix Size: 512x512**
+  - Max Error: 1.02124e-06
+  - CPU Time: 1.18075 s
+  - GPU Time: 0.0498691 s
+  - Speedup: 23.6771x
+
+- **Matrix Size: 1024x1024**
+  - Max Error: 2.51715e-07
+  - CPU Time: 10.1626 s
+  - GPU Time: 0.268092 s
+  - Speedup: 37.9073x
+
+### Future Work
+- Optimize the CUDA kernels for better performance.
+- Explore other matrix operations and their CUDA implementations.
+- Investigate numerical stability and precision improvements.
+- Validate the implementation with larger matrices and different types of matrices.
