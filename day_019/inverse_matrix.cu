@@ -143,3 +143,69 @@ void matrix_inverse_gpu(float* d_A, int n) {
 }
 
 
+void test_matrix_inverse(int n) {
+    std::vector<float> h_A(n * n);
+    std::vector<float> h_A_inv_cpu(n * n);
+    std::vector<float> h_A_inv_gpu(n * n);
+    
+    
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_real_distribution<float> dist(1.0f, 10.0f);
+    
+    for(int i = 0; i < n; ++i) {
+        float sum = 0.0f;
+        for(int j = 0; j < n; ++j) {
+            h_A[i * n + j] = dist(gen);
+            sum += fabs(h_A[i * n + j]);
+        }
+        h_A[i * n + i] = sum + 1.0f; 
+    }
+    
+    
+    h_A_inv_cpu = h_A;
+    auto start_cpu = std::chrono::high_resolution_clock::now();
+    matrix_inverse_cpu(h_A_inv_cpu.data(), n);
+    auto end_cpu = std::chrono::high_resolution_clock::now();
+    float cpu_time = std::chrono::duration<float>(end_cpu - start_cpu).count();
+    
+    float *d_A;
+    cudaMalloc(&d_A, n * n * sizeof(float));
+    cudaMemcpy(d_A, h_A.data(), n * n * sizeof(float), cudaMemcpyHostToDevice);
+    
+    cudaEvent_t start, stop;
+    cudaEventCreate(&start);
+    cudaEventCreate(&stop);
+    
+    cudaEventRecord(start);
+    matrix_inverse_gpu(d_A, n);
+    cudaEventRecord(stop);
+    cudaEventSynchronize(stop);
+    
+    cudaMemcpy(h_A_inv_gpu.data(), d_A, n * n * sizeof(float), cudaMemcpyDeviceToHost);
+    
+    float gpu_time;
+    cudaEventElapsedTime(&gpu_time, start, stop);
+    gpu_time /= 1000.0f; 
+    
+    
+    float max_error = 0.0f;
+    for(int i = 0; i < n * n; ++i)
+        max_error = fmaxf(max_error, fabsf(h_A_inv_cpu[i] - h_A_inv_gpu[i]));
+    
+    std::cout << "Matrix Size: " << n << "x" << n << "\n";
+    std::cout << "Max Error: " << max_error << "\n";
+    std::cout << "CPU Time: " << cpu_time << " s\n";
+    std::cout << "GPU Time: " << gpu_time << " s\n";
+    std::cout << "Speedup: " << cpu_time / gpu_time << "x\n\n";
+    
+    cudaFree(d_A);
+    cudaEventDestroy(start);
+    cudaEventDestroy(stop);
+}
+int main() {
+    test_matrix_inverse(256);
+    test_matrix_inverse(512);
+    test_matrix_inverse(1024);
+    return 0;
+}
