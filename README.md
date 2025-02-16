@@ -480,3 +480,38 @@ Implemented matrix inversion using CUDA. This operation is essential in various 
 - Explore other matrix operations and their CUDA implementations.
 - Investigate numerical stability and precision improvements.
 - Validate the implementation with larger matrices and different types of matrices.
+
+## Day 20
+**File:** `kmeans.cu`
+
+### Summary
+Implemented the K-Means clustering algorithm using CUDA. This algorithm partitions a set of data points into clusters, where each point belongs to the cluster with the nearest mean. The implementation includes both a CUDA kernel and a CPU version for comparison.
+
+### Key Concepts
+1. **K-Means Clustering**:
+   - The K-Means algorithm partitions data points into $K$ clusters by iteratively updating cluster centroids and reassigning points to the nearest centroid.
+   - The goal is to minimize the sum of squared distances between points and their assigned cluster centroids.
+
+2. **CUDA Kernels for K-Means**:
+   - **Assign Clusters Kernel**: Each thread computes the distance between a data point and all centroids, assigning the point to the nearest centroid.
+   - **Update Centroids Kernel**: Each thread updates the centroids by computing the mean of all points assigned to each cluster.
+
+3. **Performance Comparison**:
+   - Measured the execution time of both the CPU and GPU implementations.
+   - Compared the results to ensure they match and evaluated the speedup achieved by using the GPU.
+
+### Results
+- **K-Means Clustering Results**
+  - Data Points: 1000000
+  - Dimensions: 2
+  - Clusters: 3
+  - Validation: PASSED
+  - CPU Time: 3.26551s
+  - GPU Time: 0.310679s
+  - Speedup: 10.5109x
+
+### Future Work
+- Optimize the CUDA kernels for better performance.
+- Explore other clustering algorithms and their CUDA implementations.
+- Investigate the impact of different initialization methods on clustering performance.
+- Validate the implementation with higher-dimensional data and more clusters.
