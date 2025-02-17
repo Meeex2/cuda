@@ -515,3 +515,43 @@ Implemented the K-Means clustering algorithm using CUDA. This algorithm partitio
 - Explore other clustering algorithms and their CUDA implementations.
 - Investigate the impact of different initialization methods on clustering performance.
 - Validate the implementation with higher-dimensional data and more clusters.
+
+## Day 21
+**File:** `diffusion_noising.cu`
+
+### Summary
+Implemented the diffusion noising process using CUDA. This process is used in various machine learning models, particularly in generative models, to add noise to data in a controlled manner. The implementation includes both a CUDA kernel and a CPU version for comparison.
+
+### Key Concepts
+1. **Diffusion Noising**:
+   - The diffusion noising process involves adding noise to data in a way that is controlled by a parameter, typically used in generative models.
+   - The formula for diffusion noising is:
+     
+     $x_t = \sqrt{\alpha_t} \cdot x_{t-1} + \sqrt{1 - \alpha_t} \cdot \text{noise}$
+     
+   - Here, $x_t$ is the noisy data at timestep $t$, $\alpha_t$ is a parameter controlling the amount of noise, and `noise` is a random Gaussian noise.
+
+2. **CUDA Kernel for Diffusion Noising**:
+   - Each thread computes the noisy value for a single element of the input array.
+   - The kernel uses the provided noise and alpha parameters to compute the noisy data.
+
+3. **CPU Implementation**:
+   - A CPU version of the diffusion noising function is implemented for comparison with the GPU results.
+   - This helps in verifying the correctness of the CUDA implementation.
+
+4. **Performance Comparison**:
+   - Measured the execution time of both the CPU and GPU implementations.
+   - Compared the results to ensure they match and evaluated the speedup achieved by using the GPU.
+
+### Results
+- **Diffusion Noising Results**
+  - Validation: PASSED
+  - CPU Time: 0.003534 seconds
+  - GPU Time: 0.000190464 seconds
+  - Speedup: 18.5547x
+
+### Future Work
+- Optimize the CUDA kernel for better performance.
+- Explore other noising techniques and their CUDA implementations.
+- Investigate the impact of different noise distributions on the diffusion process.
+- Validate the implementation with different datasets and parameters.
