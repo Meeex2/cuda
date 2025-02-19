@@ -555,3 +555,45 @@ Implemented the diffusion noising process using CUDA. This process is used in va
 - Explore other noising techniques and their CUDA implementations.
 - Investigate the impact of different noise distributions on the diffusion process.
 - Validate the implementation with different datasets and parameters.
+
+## Day 22
+**File:** `elish.cu`
+
+### Summary
+Implemented the ELiSH (Exponential Linear Squashing) activation function using CUDA. The ELiSH function is used in neural networks to introduce non-linearity. This implementation includes both a CUDA kernel and a CPU version for comparison.
+
+### Key Concepts
+1. **ELiSH Activation Function**:
+   - The ELiSH function is defined as:
+     
+     $\text{ELiSH}(x) = \begin{cases} 
+     x \cdot \text{sigmoid}(x) & \text{if } x \geq 0 \\
+     (\exp(x) - 1) \cdot \text{sigmoid}(x) & \text{if } x < 0 
+     \end{cases}$
+     
+   - It combines the exponential and sigmoid functions to create a smooth, non-linear activation.
+
+2. **CUDA Kernel for ELiSH**:
+   - Each thread computes the ELiSH activation for a single element of the input array.
+   - The results are stored in the output array.
+
+3. **CPU Implementation**:
+   - A CPU version of the ELiSH function is implemented for comparison with the GPU results.
+   - This helps in verifying the correctness of the CUDA implementation.
+
+4. **Performance Comparison**:
+   - Measured the execution time of both the CPU and GPU implementations.
+   - Compared the results to ensure they match and evaluated the speedup achieved by using the GPU.
+
+### Results
+- **ELiSH Activation Results**
+  - Validation: PASSED
+  - CPU Time: 0.0186454 seconds
+  - GPU Time: 0.000240544 seconds
+  - Speedup: 77.5135x
+
+### Future Work
+- Optimize the CUDA kernel for better performance.
+- Explore other activation functions and their CUDA implementations.
+- Investigate the impact of ELiSH on different neural network architectures.
+- Validate the implementation with larger datasets and different parameters.
