@@ -597,3 +597,46 @@ Implemented the ELiSH (Exponential Linear Squashing) activation function using C
 - Explore other activation functions and their CUDA implementations.
 - Investigate the impact of ELiSH on different neural network architectures.
 - Validate the implementation with larger datasets and different parameters.
+
+## Day 23
+**File:** `selu.cu`
+
+### Summary
+Implemented the SELU (Scaled Exponential Linear Unit) activation function using CUDA. The SELU function is used in neural networks to introduce non-linearity and maintain self-normalizing properties. This implementation includes both a CUDA kernel and a CPU version for comparison.
+
+### Key Concepts
+1. **SELU Activation Function**:
+   - The SELU function is defined as:
+     
+     $\text{SELU}(x) = \lambda \begin{cases} 
+     x & \text{if } x \geq 0 \\ 
+     \alpha (\exp(x) - 1) & \text{if } x < 0 
+     \end{cases}$
+     
+   - Here, $\lambda$ and $\alpha$ are predefined constants that ensure the self-normalizing property of the activation function.
+
+2. **CUDA Kernel for SELU**:
+   - Each thread computes the SELU activation for a single element of the input array.
+   - The results are stored in the output array.
+
+3. **CPU Implementation**:
+   - A CPU version of the SELU function is implemented for comparison with the GPU results.
+   - This helps in verifying the correctness of the CUDA implementation.
+
+4. **Performance Comparison**:
+   - Measured the execution time of both the CPU and GPU implementations.
+   - Compared the results to ensure they match and evaluated the speedup achieved by using the GPU.
+
+### Results
+- **SELU Activation Results**
+  - Validation: PASSED
+  - CPU Time: 0.0139118 seconds
+  - GPU Time: 0.00019568 seconds
+  - Speedup: 71.0947x
+
+### Future Work
+- Optimize the CUDA kernel for better performance.
+- Explore other activation functions and their CUDA implementations.
+- Investigate the impact of SELU on different neural network architectures.
+- Validate the implementation with larger datasets and different parameters.
+
