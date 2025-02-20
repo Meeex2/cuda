@@ -640,3 +640,54 @@ Implemented the SELU (Scaled Exponential Linear Unit) activation function using 
 - Investigate the impact of SELU on different neural network architectures.
 - Validate the implementation with larger datasets and different parameters.
 
+## Day 24
+**File:** `adam.cu`
+
+### Summary
+Implemented the Adam optimization algorithm using CUDA. Adam is an adaptive learning rate optimization algorithm widely used in training deep learning models. This implementation includes both a CUDA kernel and a CPU version for comparison.
+
+### Key Concepts
+1. **Adam Optimization Algorithm**:
+   - Adam combines the advantages of two other extensions of stochastic gradient descent: AdaGrad and RMSProp.
+   - The update rule for Adam is:
+     
+     $m_t = \beta_1 \cdot m_{t-1} + (1 - \beta_1) \cdot g_t$
+     
+     $v_t = \beta_2 \cdot v_{t-1} + (1 - \beta_2) \cdot g_t^2$
+     
+     $\hat{m}_t = \frac{m_t}{1 - \beta_1^t}$
+     
+     $\hat{v}_t = \frac{v_t}{1 - \beta_2^t}$
+     
+     $\theta_t = \theta_{t-1} - \eta \cdot \frac{\hat{m}_t}{\sqrt{\hat{v}_t} + \epsilon}$
+     
+   - Here, $m_t$ and $v_t$ are the first and second moment estimates, $\beta_1$ and $\beta_2$ are the decay rates, $\eta$ is the learning rate, and $\epsilon$ is a small constant to prevent division by zero.
+
+2. **CUDA Kernel for Adam**:
+   - Each thread updates the parameters for a single element of the input array using the Adam update rule.
+   - The results are stored in the output array.
+
+3. **CPU Implementation**:
+   - A CPU version of the Adam optimization algorithm is implemented for comparison with the GPU results.
+   - This helps in verifying the correctness of the CUDA implementation.
+
+4. **Performance Comparison**:
+   - Measured the execution time of both the CPU and GPU implementations.
+   - Compared the results to ensure they match and evaluated the speedup achieved by using the GPU.
+
+### Results
+- **Validation Results**
+  - Parameters: PASSED
+  - First moment (m): PASSED
+  - Second moment (v): PASSED
+
+- **Performance**
+  - CPU time: 0.0780394 seconds
+  - GPU time: 0.000322752 seconds
+  - Speedup: 241.794x
+
+### Future Work
+- Optimize the CUDA kernel for better performance.
+- Explore other optimization algorithms and their CUDA implementations.
+- Investigate the impact of Adam on different neural network architectures.
+- Validate the implementation with larger datasets and different parameters.
