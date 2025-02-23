@@ -785,3 +785,41 @@ Implemented an optimized version of quantization using CUDA with shared memory a
 - Investigate the impact of quantization on model accuracy and performance.
 - Validate the implementation with larger datasets and different quantization parameters.
 - Implement mixed-precision quantization for more efficient model deployment.
+
+
+## Day 27
+**File:** `swish.cu`
+
+### Summary
+Implemented the Swish activation function using CUDA. The Swish function is used in neural networks to introduce non-linearity and has been shown to perform better than ReLU in some cases. This implementation includes both a CUDA kernel and a CPU version for comparison.
+
+### Key Concepts
+1. **Swish Activation Function**:
+   - The Swish function is defined as:
+     
+     $\text{Swish}(x) = x \cdot \text{sigmoid}(x)$
+     
+   - It combines the input with the sigmoid function to create a smooth, non-linear activation.
+
+2. **CUDA Kernel for Swish**:
+   - Each thread computes the Swish activation for a single element of the input array.
+   - The results are stored in the output array.
+
+3. **CPU Implementation**:
+   - A CPU version of the Swish function is implemented for comparison with the GPU results.
+   - This helps in verifying the correctness of the CUDA implementation.
+
+4. **Performance Comparison**:
+   - Measured the execution time of both the CPU and GPU implementations.
+   - Compared the results to ensure they match and evaluated the speedup achieved by using the GPU.
+
+### Results
+
+- **Performance**
+  - CPU time: 0.166661 seconds
+  - GPU time: 0.000816832 seconds
+  - Speedup: 204.034x
+
+### Future Work
+- Optimize the CUDA kernel for better performance.
+- Explore other activation functions and their CUDA implementations.
