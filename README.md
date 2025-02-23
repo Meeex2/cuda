@@ -743,3 +743,45 @@ Implemented quantization and dequantization using CUDA. Quantization is a techni
 - Investigate the impact of quantization on model accuracy and performance.
 - Validate the implementation with larger datasets and different quantization parameters.
 - Implement mixed-precision quantization for more efficient model deployment.
+
+## Day 26
+**File:** `quantization_v2.cu`
+
+### Summary
+Implemented an optimized version of quantization using CUDA with shared memory and tiling. Quantization is a technique used to reduce the precision of model parameters and activations, which is crucial for efficient deployment of deep learning models, especially on resource-constrained devices. This implementation includes both CUDA kernels and CPU versions for comparison.
+
+### Key Concepts
+1. **Quantization**:
+   - Quantization maps floating-point values to a smaller set of discrete values, typically 8-bit integers (uint8).
+   - The quantization formula is:
+     
+     $Q(x) = \text{round}\left(\frac{x}{\text{scale}}\right) + \text{zero\_point}$
+
+2. **CUDA Kernel with Shared Memory and Tiling**:
+   - Utilized shared memory to load data into tiles, reducing global memory access latency.
+   - Each thread processes a single element of the input array within its tile.
+   - The `quantize_kernel` converts FP32 values to uint8 using the quantization formula.
+
+3. **CPU Implementation**:
+   - A CPU version of the quantization process is implemented for comparison with the GPU results.
+   - This helps in verifying the correctness of the CUDA implementation.
+
+4. **Performance Comparison**:
+   - Measured the execution time of both the CPU and GPU implementations.
+   - Compared the results to ensure they match and evaluated the speedup achieved by using the GPU.
+
+### Results
+- **Validation Results**
+  - Validation: PASSED
+
+- **Performance**
+  - CPU time: 0.210664 seconds
+  - GPU time: 0.000843776 seconds
+  - Speedup: 249.668x
+
+### Future Work
+- Optimize the CUDA kernel for better performance.
+- Explore different quantization schemes, such as symmetric vs. asymmetric quantization.
+- Investigate the impact of quantization on model accuracy and performance.
+- Validate the implementation with larger datasets and different quantization parameters.
+- Implement mixed-precision quantization for more efficient model deployment.
