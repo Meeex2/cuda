@@ -771,8 +771,6 @@ Implemented an optimized version of quantization using CUDA with shared memory a
    - Compared the results to ensure they match and evaluated the speedup achieved by using the GPU.
 
 ### Results
-- **Validation Results**
-  - Validation: PASSED
 
 - **Performance**
   - CPU time: 0.210664 seconds
