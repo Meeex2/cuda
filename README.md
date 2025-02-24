@@ -816,9 +816,49 @@ Implemented the Swish activation function using CUDA. The Swish function is used
 ### Results
 
 - **Performance**
-  - CPU time: 0.166661 seconds
-  - GPU time: 0.000816832 seconds
-  - Speedup: 204.034x
+  - CPU time: 0.234491 seconds
+  - GPU time: 0.000752832 seconds
+  - Speedup: 311.479x
+
+### Future Work
+- Optimize the CUDA kernel for better performance.
+- Explore other activation functions and their CUDA implementations.
+
+## Day 28
+**File:** `elu.cu`
+
+### Summary
+Implemented the Exponential Linear Unit (ELU) activation function using CUDA. The ELU function is used in neural networks to introduce non-linearity and can help mitigate the vanishing gradient problem. This implementation includes both a CUDA kernel and a CPU version for comparison.
+
+### Key Concepts
+1. **ELU Activation Function**:
+   - The ELU function is defined as:
+     
+     $\text{ELU}(x) = \begin{cases} 
+     x & \text{if } x > 0 \\
+     \alpha (\exp(x) - 1) & \text{if } x \leq 0 
+     \end{cases}$
+     
+   - It introduces a smooth, non-linear activation that can help improve learning in deep neural networks.
+
+2. **CUDA Kernel for ELU**:
+   - Each thread computes the ELU activation for a single element of the input array.
+   - The results are stored in the output array.
+
+3. **CPU Implementation**:
+   - A CPU version of the ELU function is implemented for comparison with the GPU results.
+   - This helps in verifying the correctness of the CUDA implementation.
+
+4. **Performance Comparison**:
+   - Measured the execution time of both the CPU and GPU implementations.
+   - Compared the results to ensure they match and evaluated the speedup achieved by using the GPU.
+
+### Results
+
+- **Performance**
+  - CPU time: 0.234491 seconds
+  - GPU time: 0.000752832 seconds
+  - Speedup: 311.479x
 
 ### Future Work
 - Optimize the CUDA kernel for better performance.
