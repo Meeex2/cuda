@@ -17,3 +17,15 @@ __global__ void smooth_swiglu_kernel(const float* input, float* output, int num_
     }
 }
 
+void cpu_smooth_swiglu(const float* input, float* output, int num_elements) {
+    for (int i = 0; i < num_elements; ++i) {
+        const float x = input[i];
+        const float sigmoid = 1.0f / (1.0f + std::exp(-x));  
+        const float swish = x * sigmoid;                     
+        const float glu = x * swish;                         
+        output[i] = glu / (1.0f + std::exp(-glu));           
+    }
+}
+
+
+
