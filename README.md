@@ -876,7 +876,7 @@ Implemented the Smooth SwiGLU activation function using CUDA. The Smooth SwiGLU 
      
      $\text{Smooth SwiGLU}(x) = \frac{\text{SwiGLU}(x)}{1 + \exp(-\text{SwiGLU}(x))}$
      
-   - Here, SwiGLU is defined as $x \cdot \text{sigmoid}(x) \cdot x \cdot \text{sigmoid}(x)$.
+   - Here, SwiGLU is defined in day 18.
 
 2. **CUDA Kernel for Smooth SwiGLU**:
    - Each thread computes the Smooth SwiGLU activation for a single element of the input array.
