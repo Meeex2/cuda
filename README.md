@@ -900,5 +900,4 @@ Implemented the Smooth SwiGLU activation function using CUDA. The Smooth SwiGLU 
 ### Future Work
 - Optimize the CUDA kernel for better performance.
 - Explore other activation functions and their CUDA implementations.
-- Investigate the impact of Smooth SwiGLU on different neural network architectures.
 - Validate the implementation with larger datasets and different parameters.
