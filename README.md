@@ -861,3 +861,44 @@ Implemented the Exponential Linear Unit (ELU) activation function using CUDA. Th
 ### Future Work
 - Optimize the CUDA kernel for better performance.
 - Explore other activation functions and their CUDA implementations.
+
+
+## Day 29
+**File:** `smooth_swiglu.cu`
+
+### Summary
+Implemented the Smooth SwiGLU activation function using CUDA. The Smooth SwiGLU function is used in neural networks to introduce non-linearity and gating mechanisms, combining the Swish activation function with a gating mechanism. This implementation includes both a CUDA kernel and a CPU version for comparison.
+
+### Key Concepts
+1. **Smooth SwiGLU Activation Function**:
+   - The Smooth SwiGLU function combines the Swish activation with a gating mechanism.
+   - The formula for Smooth SwiGLU is:
+     
+     $\text{Smooth SwiGLU}(x) = \frac{\text{SwiGLU}(x)}{1 + \exp(-\text{SwiGLU}(x))}$
+     
+   - Here, SwiGLU is defined as $x \cdot \text{sigmoid}(x) \cdot x \cdot \text{sigmoid}(x)$.
+
+2. **CUDA Kernel for Smooth SwiGLU**:
+   - Each thread computes the Smooth SwiGLU activation for a single element of the input array.
+   - The results are stored in the output array.
+
+3. **CPU Implementation**:
+   - A CPU version of the Smooth SwiGLU function is implemented for comparison with the GPU results.
+   - This helps in verifying the correctness of the CUDA implementation.
+
+4. **Performance Comparison**:
+   - Measured the execution time of both the CPU and GPU implementations.
+   - Compared the results to ensure they match and evaluated the speedup achieved by using the GPU.
+
+### Results
+
+- **Performance**
+  - CPU time: 0.41193 seconds
+  - GPU time: 0.000925408 seconds
+  - Speedup: 445.133x
+
+### Future Work
+- Optimize the CUDA kernel for better performance.
+- Explore other activation functions and their CUDA implementations.
+- Investigate the impact of Smooth SwiGLU on different neural network architectures.
+- Validate the implementation with larger datasets and different parameters.
