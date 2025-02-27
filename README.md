@@ -901,3 +901,48 @@ Implemented the Smooth SwiGLU activation function using CUDA. The Smooth SwiGLU 
 - Optimize the CUDA kernel for better performance.
 - Explore other activation functions and their CUDA implementations.
 - Validate the implementation with larger datasets and different parameters.
+
+
+## Day 30
+**File:** `cutlass_prod.cu`
+
+### Summary
+Explored the CUTLASS library to implement matrix multiplication using CUDA. The CUTLASS library provides highly optimized CUDA kernels for various linear algebra operations. This implementation includes both a CUDA kernel using CUTLASS and a CPU version for comparison.
+
+### Key Concepts
+1. **CUTLASS Library**:
+   - CUTLASS (CUDA Templates for Linear Algebra Subroutines and Solvers) is a collection of CUDA C++ templates for implementing high-performance matrix-multiplication (GEMM) and related computations.
+   - It provides a flexible and efficient way to perform matrix operations on NVIDIA GPUs.
+
+2. **Matrix Multiplication**:
+   - Matrix multiplication involves computing the product of two matrices, resulting in a third matrix.
+   - The formula for matrix multiplication is:
+     
+     $C = A \times B$
+     
+   - Here, $A$, $B$, and $C$ are matrices, and the product is computed by taking the dot product of rows of $A$ with columns of $B$.
+
+3. **CUDA Kernel using CUTLASS**:
+   - Utilized the CUTLASS library to perform matrix multiplication on the GPU.
+   - Configured the CUTLASS GEMM operation with appropriate parameters for matrix dimensions and data types.
+
+4. **CPU Implementation**:
+   - A CPU version of the matrix multiplication function is implemented for comparison with the GPU results.
+   - This helps in verifying the correctness of the CUTLASS implementation.
+
+5. **Performance Comparison**:
+   - Measured the execution time of both the CPU and GPU implementations.
+   - Compared the results to ensure they match and evaluated the speedup achieved by using the GPU.
+
+### Results
+
+- **Validation**: PASSED
+- **Performance**
+  - CPU time: 8.00976 seconds
+  - GPU time: 0.00133392 seconds
+  - Speedup: 6004.68x
+
+### Future Work
+- Explore other operations provided by the CUTLASS library.
+- Optimize the CUTLASS configuration for better performance.
+- Validate the implementation with larger matrices and different configurations.
