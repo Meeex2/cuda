@@ -993,3 +993,57 @@ Implemented batched matrix multiplication using CUDA and the CUTLASS library. Th
 - Validate the implementation with larger matrices and different configurations.
 - Investigate the impact of different matrix sizes and batch counts on performance.
 - Explore the use of CUTLASS for other deep learning operations.
+
+## Day 32
+**File:** `spmv.cu`
+
+### Summary
+Implemented **Sparse Matrix-Vector Multiplication (SpMV)** using CUDA. This implementation includes a CUDA kernel for SpMV using the **Compressed Sparse Row (CSR)** format and a CPU version for validation and performance comparison.
+
+### Key Concepts
+1. **Sparse Matrix Representation**:
+   - Sparse matrices are represented using the **Compressed Sparse Row (CSR)** format, which consists of three arrays:
+     - `values`: Stores the non-zero values of the matrix.
+     - `col_indices`: Stores the column indices of the non-zero values.
+     - `row_ptr`: Stores the starting index of each row in the `values` and `col_indices` arrays.
+
+2. **Sparse Matrix-Vector Multiplication (SpMV)**:
+   - SpMV computes the product of a sparse matrix $A$ and a dense vector $x$ to produce a dense vector $y$:
+     
+     $y = A \cdot x$
+     
+   - In CSR format, this involves iterating over the non-zero elements of each row and computing the dot product with the corresponding elements of $x$.
+
+3. **CUDA Kernel for SpMV**:
+   - Each thread in the CUDA kernel computes one element of the output vector $y$ by processing the non-zero elements of the corresponding row in the sparse matrix.
+   - The kernel uses global memory to access the sparse matrix and input vector.
+
+4. **CPU Implementation**:
+   - A CPU version of SpMV is implemented for validation and performance comparison.
+   - This ensures the correctness of the CUDA kernel and provides a baseline for performance evaluation.
+
+5. **Performance Comparison**:
+   - Measured the execution time of both the CPU and GPU implementations.
+   - Compared the results to ensure they match and evaluated the speedup achieved by using the GPU.
+
+### Results
+
+- **Performance**
+    -  CPU time: 0.00684534 seconds
+    -  GPU time: 0.000342016 seconds
+    -  Speedup: 20.0147x
+
+
+### Future Work
+- **Optimize Kernel**:
+  - Use shared memory to reduce global memory accesses.
+  - Implement warp-level parallelism to improve performance.
+- **Larger Problem Sizes**:
+  - Test the implementation with larger sparse matrices to evaluate scalability.
+- **Use cuSPARSE**:
+  - Compare the custom CUDA kernel with NVIDIA's `cuSPARSE` library for SpMV.
+- **Different Sparse Formats**:
+  - Explore other sparse matrix formats like **Compressed Sparse Column (CSC)** or **ELLPACK**.
+- **Application to Real-World Problems**:
+  - Apply SpMV to real-world problems such as graph algorithms or iterative solvers for linear systems.
+
