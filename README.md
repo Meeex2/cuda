@@ -946,3 +946,50 @@ Explored the CUTLASS library to implement matrix multiplication using CUDA. The 
 - Explore other operations provided by the CUTLASS library.
 - Optimize the CUTLASS configuration for better performance.
 - Validate the implementation with larger matrices and different configurations.
+
+
+## Day 31
+**File:** `batched_prod.cu`
+
+### Summary
+Implemented batched matrix multiplication using CUDA and the CUTLASS library. This implementation includes both a CUDA kernel using CUTLASS for batched GEMM (General Matrix Multiplication) and a CPU version for comparison.
+
+### Key Concepts
+1. **CUTLASS Library**:
+   - CUTLASS (CUDA Templates for Linear Algebra Subroutines and Solvers) is a collection of CUDA C++ templates for implementing high-performance matrix-multiplication (GEMM) and related computations.
+   - It provides a flexible and efficient way to perform batched GEMM operations on NVIDIA GPUs.
+
+2. **Batched Matrix Multiplication**:
+   - Batched matrix multiplication involves performing multiple matrix multiplications in parallel.
+   - The formula for matrix multiplication is:
+     
+     $C = \alpha \cdot A \cdot B + \beta \cdot C$
+     
+   - Here, $A$, $B$, and $C$ are matrices, and $\alpha$ and $\beta$ are scalars.
+
+3. **CUDA Kernel using CUTLASS**:
+   - Utilized the CUTLASS library to perform batched GEMM on the GPU.
+   - Configured the CUTLASS GEMM operation with appropriate parameters for matrix dimensions, data types, and batch size.
+
+4. **CPU Implementation**:
+   - A CPU version of the batched GEMM function is implemented for comparison with the GPU results.
+   - This helps in verifying the correctness of the CUTLASS implementation.
+
+5. **Performance Comparison**:
+   - Measured the execution time of both the CPU and GPU implementations.
+   - Compared the results to ensure they match and evaluated the speedup achieved by using the GPU.
+
+### Results
+
+- **Performance**
+  - CPU time: 67.243 seconds
+  - GPU time: 0.004 seconds
+  - Speedup: 16810.75x
+  - Maximum error: 0.00012207
+
+### Future Work
+- Explore other batched operations provided by the CUTLASS library.
+- Optimize the CUTLASS configuration for better performance.
+- Validate the implementation with larger matrices and different configurations.
+- Investigate the impact of different matrix sizes and batch counts on performance.
+- Explore the use of CUTLASS for other deep learning operations.
