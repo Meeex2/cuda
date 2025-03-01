@@ -1047,3 +1047,85 @@ Implemented **Sparse Matrix-Vector Multiplication (SpMV)** using CUDA. This impl
 - **Application to Real-World Problems**:
   - Apply SpMV to real-world problems such as graph algorithms or iterative solvers for linear systems.
 
+
+## Day 33
+**File:** `cross_entropy_loss.cu`
+
+### Summary
+Implemented **Cross-Entropy Loss** using CUDA. This implementation includes a CUDA kernel for computing the loss and a CPU version for validation and performance comparison.
+
+### Key Concepts
+1. **Cross-Entropy Loss**:
+   - A loss function commonly used in classification tasks.
+   - Measures the difference between predicted probabilities and ground truth labels.
+
+2. **CUDA Kernel**:
+   - Each thread computes the loss for one sample in the batch.
+   - Uses global memory to access predictions and labels.
+
+3. **CPU Implementation**:
+   - A CPU version of the loss function is implemented for validation and performance comparison.
+
+4. **Performance Comparison**:
+   - Measured the execution time of both the CPU and GPU implementations.
+   - Compared the results to ensure they match and evaluated the speedup achieved by using the GPU.
+
+### Results
+
+- **Performance**
+  - CPU time: 0.00157762 seconds
+  - GPU time: 0.000155296 seconds
+  - Speedup: 10.1588x
+
+---
+
+### Analysis of Speedup
+
+The GPU implementation achieves a **speedup of ~10x** over the CPU implementation. While this is a significant improvement, the speedup is relatively modest compared to what GPUs are capable of (often 100x or more for highly parallelizable tasks). Here are the key reasons for the limited speedup:
+
+---
+
+#### 1. **Small Problem Size**:
+   - The problem size (`num_samples = 100000`, `num_classes = 10`) is still relatively small for a GPU.
+   - GPUs excel at handling massive parallelism, but for smaller problems, the overhead of launching the kernel and transferring data between the CPU and GPU can dominate the execution time.
+
+---
+
+#### 2. **Memory Bandwidth Bottleneck**:
+   - The kernel accesses global memory in a non-coalesced manner, which can lead to poor memory bandwidth utilization.
+   - Each thread reads the `predictions` and `labels` arrays from global memory, which is much slower than accessing shared memory or registers.
+   - Optimizing memory access patterns (e.g., using shared memory or coalesced memory accesses) could improve performance.
+
+---
+
+#### 3. **Kernel Overhead**:
+   - The kernel is relatively simple, with each thread performing only a few arithmetic operations (logarithm and addition).
+   - The overhead of launching the kernel and managing threads can outweigh the actual computation, especially for small problem sizes.
+
+---
+
+#### 4. **Data Transfer Overhead**:
+   - The time taken to transfer data between the CPU and GPU (`cudaMemcpy`) is included in the GPU timing.
+   - For small to medium-sized problems, this overhead can significantly impact the overall performance.
+   - Overlapping data transfer with computation using CUDA streams or asynchronous memory copies could mitigate this issue.
+
+---
+
+#### 5. **Limited Parallelism**:
+   - The kernel assigns one thread per sample, which may not fully utilize the GPU's parallel processing capabilities.
+
+
+---
+
+### Future Work
+1. **Optimize Kernel**:
+   - Use shared memory to reduce global memory accesses.
+   - Implement warp-level parallelism to improve performance.
+   - Process multiple samples per thread to increase parallelism.
+
+2. **Increase Problem Size**:
+   - Test the implementation with larger batch sizes (e.g., `num_samples = 1,000,000`) to better utilize the GPU's parallel processing power.
+
+3. **Reduce Data Transfer Overhead**:
+   - Overlap data transfer with computation using CUDA streams or asynchronous memory copies.
+
