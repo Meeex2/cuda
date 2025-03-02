@@ -1129,3 +1129,49 @@ The GPU implementation achieves a **speedup of ~10x** over the CPU implementatio
 3. **Reduce Data Transfer Overhead**:
    - Overlap data transfer with computation using CUDA streams or asynchronous memory copies.
 
+
+
+## Day 34
+**File:** `perplexity.cu`
+
+### Summary
+Implemented **Perplexity**, a metric used in language models, using CUDA. This implementation includes a CUDA kernel for computing perplexity and a CPU version for validation and performance comparison.
+
+### Key Concepts
+1. **Perplexity**:
+   - A metric used to evaluate language models.
+   - Defined as:
+     
+     $$
+     \text{Perplexity} = \exp\left(-\frac{1}{N} \sum_{i=1}^{N} \log(p_i)\right)
+     $$
+     
+   - Lower perplexity indicates better model performance.
+
+2. **CUDA Kernel**:
+   - Each thread computes the log loss for one sample.
+   - Uses global memory to access probabilities and labels.
+
+3. **CPU Implementation**:
+   - A CPU version of the perplexity computation is implemented for validation and performance comparison.
+
+4. **Performance Comparison**:
+   - Measured the execution time of both the CPU and GPU implementations.
+   - Compared the results to ensure they match and evaluated the speedup achieved by using the GPU.
+
+### Results
+
+- **Performance**
+   - CPU time: 0.00157565 seconds
+   - GPU time: 0.000169376 seconds
+   - Speedup: 9.3027x
+
+### Future Work
+- **Optimize Kernel**:
+  - Use shared memory to reduce global memory accesses.
+  - Implement warp-level parallelism to improve performance.
+- **Larger Problem Sizes**:
+  - Test the implementation with larger datasets to evaluate scalability.
+- **Application to Real-World Problems**:
+  - Integrate perplexity computation into a language model training pipeline.
+
