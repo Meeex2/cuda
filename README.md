@@ -703,7 +703,7 @@ Implemented quantization and dequantization using CUDA. Quantization is a techni
    - Quantization maps floating-point values to a smaller set of discrete values, typically 8-bit integers (uint8).
    - The quantization formula is:
      
-     $Q(x) = \text{round}\left(\frac{x}{\text{scale}}\right) + \text{zero\_point}$
+     $$Q(x) = \text{round}\left(\frac{x}{\text{scale}}\right) + \text{zero\_point}$$
      
    - Here, `scale` determines the quantization step size, and `zero_point` shifts the quantized values to center them around zero.
 
@@ -711,7 +711,7 @@ Implemented quantization and dequantization using CUDA. Quantization is a techni
    - Dequantization maps the quantized values back to floating-point values.
    - The dequantization formula is:
      
-     $D(q) = (q - \text{zero\_point}) \times \text{scale}$
+     $$D(q) = (q - \text{zero\_point}) \times \text{scale}$$
      
 3. **CUDA Kernels for Quantization and Dequantization**:
    - Each thread processes a single element of the input array.
@@ -755,7 +755,7 @@ Implemented an optimized version of quantization using CUDA with shared memory a
    - Quantization maps floating-point values to a smaller set of discrete values, typically 8-bit integers (uint8).
    - The quantization formula is:
      
-     $Q(x) = \text{round}\left(\frac{x}{\text{scale}}\right) + \text{zero\_point}$
+     $$Q(x) = \text{round}\left(\frac{x}{\text{scale}}\right) + \text{zero\_point}$$
 
 2. **CUDA Kernel with Shared Memory and Tiling**:
    - Utilized shared memory to load data into tiles, reducing global memory access latency.
@@ -832,10 +832,10 @@ Implemented the Exponential Linear Unit (ELU) activation function using CUDA. Th
 1. **ELU Activation Function**:
    - The ELU function is defined as:
      
-     $\text{ELU}(x) = \begin{cases} 
+     $$\text{ELU}(x) = \begin{cases} 
      x & \text{if } x > 0 \\
      \alpha (\exp(x) - 1) & \text{if } x \leq 0 
-     \end{cases}$
+     \end{cases}$$
      
    - It introduces a smooth, non-linear activation that can help improve learning in deep neural networks.
 
@@ -874,7 +874,7 @@ Implemented the Smooth SwiGLU activation function using CUDA. The Smooth SwiGLU 
    - The Smooth SwiGLU function combines the Swish activation with a gating mechanism.
    - The formula for Smooth SwiGLU is:
      
-     $\text{Smooth SwiGLU}(x) = \frac{\text{SwiGLU}(x)}{1 + \exp(-\text{SwiGLU}(x))}$
+     $$\text{Smooth SwiGLU}(x) = \frac{\text{SwiGLU}(x)}{1 + \exp(-\text{SwiGLU}(x))}$$
      
    - Here, SwiGLU is defined in day 18.
 
