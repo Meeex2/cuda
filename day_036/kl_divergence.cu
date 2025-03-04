@@ -24,3 +24,12 @@ float kl_divergence_cpu(const std::vector<float>& P, const std::vector<float>& Q
     return divergence;
 }
 
+// Validation function
+bool validate_results(float cpu_divergence, float gpu_divergence, float tolerance = 1e-5) {
+    if (std::fabs(cpu_divergence - gpu_divergence) > tolerance) {
+        std::cout << "Mismatch: CPU=" << cpu_divergence << ", GPU=" << gpu_divergence << std::endl;
+        return false;
+    }
+    return true;
+}
+
