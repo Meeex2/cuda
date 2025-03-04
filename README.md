@@ -1218,3 +1218,75 @@ Implemented **Self-Attention Mechanism** using CUDA and CUTLASS. This implementa
 - **Larger Problem Sizes**:
   - Test the implementation with larger matrices to evaluate scalability.
 
+(Due to technical issues, the search service is temporarily unavailable.)
+
+## Day 36
+**File:** `kl_divergence.cu`
+
+### Summary
+Implemented **Kullback-Leibler (KL) Divergence** using CUDA. This implementation includes a CUDA kernel for computing KL divergence and a CPU version for validation and performance comparison. The GPU implementation achieves a **104.5x speedup** over the CPU version.
+
+### Key Concepts
+1. **KL Divergence**:
+   - A measure of how one probability distribution \( P \) diverges from a second, reference probability distribution \( Q \).
+   - Defined as:
+     
+     $$
+     D_{KL}(P || Q) = \sum_{i} P(i) \cdot \log\left(\frac{P(i)}{Q(i)}\right)
+     $$
+     
+   - Lower KL divergence indicates that the distributions are more similar.
+
+2. **CUDA Kernel**:
+   - Each thread computes the contribution of one element to the KL divergence.
+   - Uses global memory to access the distributions \( P \) and \( Q \).
+
+3. **Performance Comparison**:
+   - Measured the execution time of both the CPU and GPU implementations.
+   - Compared the results to ensure they match and evaluated the speedup achieved by using the GPU.
+
+### Results
+
+- **Performance**
+  - CPU time: 0.0132517 seconds
+  - GPU time: 0.000126816 seconds
+  - Speedup: 104.5x
+  - Validation: PASSED (error < 1e-5)
+
+---
+
+### Use Cases of KL Divergence
+
+#### 1. **Diffusion Models**
+   - KL divergence is widely used in diffusion models, such as **Denoising Diffusion Probabilistic Models (DDPMs)**, to measure the difference between the predicted noise distribution and the true noise distribution at each step of the diffusion process.
+   - Example: In DDPMs, the loss function often includes a KL divergence term to ensure that the predicted noise matches the true noise distribution.
+
+   **Reference**:
+   - Ho, J., Jain, A., & Abbeel, P. (2020). [Denoising Diffusion Probabilistic Models](https://arxiv.org/abs/2006.11239). *arXiv preprint arXiv:2006.11239*.
+
+#### 2. **Variational Autoencoders (VAEs)**
+   - KL divergence is a key component of the loss function in VAEs, where it measures the difference between the learned latent distribution and a prior distribution (e.g., a standard Gaussian).
+   - Example: In VAEs, minimizing the KL divergence ensures that the latent space is well-structured and follows the desired prior distribution.
+
+   **Reference**:
+   - Kingma, D. P., & Welling, M. (2013). [Auto-Encoding Variational Bayes](https://arxiv.org/abs/1312.6114). *arXiv preprint arXiv:1312.6114*.
+
+#### 3. **Reinforcement Learning**
+   - KL divergence is used in reinforcement learning algorithms, such as **Trust Region Policy Optimization (TRPO)** and **Proximal Policy Optimization (PPO)**, to constrain policy updates and ensure stable training.
+   - Example: In PPO, KL divergence is used to limit the difference between the old and new policies during optimization.
+
+   **Reference**:
+   - Schulman, J., Levine, S., Abbeel, P., Jordan, M., & Moritz, P. (2015). [Trust Region Policy Optimization](https://arxiv.org/abs/1502.05477). *arXiv preprint arXiv:1502.05477*.
+
+
+---
+
+### Future Work
+1. **Optimize Kernel**:
+   - Use shared memory to reduce global memory accesses.
+   - Implement warp-level parallelism to improve performance.
+2. **Larger Problem Sizes**:
+   - Test the implementation with larger datasets to evaluate scalability.
+3. **Application to Real-World Problems**:
+   - Integrate KL divergence computation into machine learning pipelines, such as diffusion models or VAEs.
+
