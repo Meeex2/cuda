@@ -1175,3 +1175,46 @@ Implemented **Perplexity**, a metric used in language models, using CUDA. This i
 - **Application to Real-World Problems**:
   - Integrate perplexity computation into a language model training pipeline.
 
+
+## Day 35
+**File:** `attention_cutlass.cu`
+
+### Summary
+Implemented **Self-Attention Mechanism** using CUDA and CUTLASS. This implementation includes CUDA kernels for softmax and weighted aggregation, and uses CUTLASS for matrix multiplication. This a work on progress which may produce some errors.
+
+### Key Concepts
+1. **Self-Attention**:
+   - A mechanism used in transformer models to compute attention scores, apply softmax, and perform weighted aggregation.
+   - Defined as:
+     
+     $$
+     \text{Scores} = \frac{Q \cdot K^T}{\sqrt{d_k}}
+     $$
+     
+     $$
+     \text{Attention Weights} = \text{Softmax}(\text{Scores})
+     $$
+     
+     $$
+     \text{Output} = \text{Attention Weights} \cdot V
+     $$
+
+2. **CUTLASS**:
+   - Used for efficient matrix multiplication (GEMM) on the GPU.
+
+3. **CUDA Kernels**:
+   - `softmax_kernel`: Applies softmax to the attention scores.
+   - `weighted_aggregation_kernel`: Computes the weighted aggregation of values.
+
+4. **Performance Comparison**:
+   - Measured the execution time of both the CPU and GPU implementations.
+   - Compared the results to ensure they match and evaluated the speedup achieved by using the GPU.
+
+
+### Future Work
+- **Optimize Kernels**:
+  - Use shared memory to reduce global memory accesses.
+  - Implement warp-level parallelism to improve performance.
+- **Larger Problem Sizes**:
+  - Test the implementation with larger matrices to evaluate scalability.
+
