@@ -78,3 +78,26 @@ void self_attention_cpu(const std::vector<float>& Q, const std::vector<float>& K
     }
 }
 
+bool validate_results(const std::vector<float>& cpu, const std::vector<float>& gpu, int size, float tolerance = 1e-3) {
+    for (int i = 0; i < size; i++) {
+        if (std::fabs(cpu[i] - gpu[i]) > tolerance) {
+            std::cout << "Mismatch at index " << i 
+                      << ": CPU=" << cpu[i] 
+                      << ", GPU=" << gpu[i] 
+                      << std::endl;
+            return false;
+        }
+    }
+    return true;
+}
+
+#define CHECK_CUDA(call) \
+    do { \
+        cudaError_t err = call; \
+        if (err != cudaSuccess) { \
+            std::cerr << "CUDA error: " << cudaGetErrorString(err) << " at " << __FILE__ << ":" << __LINE__ << std::endl; \
+            exit(EXIT_FAILURE); \
+        } \
+    } while (0)
+
+
