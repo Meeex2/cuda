@@ -63,3 +63,41 @@ __global__ void compute_gradients_kernel(const float* input, const float* grad_o
     }
 }
 
+// CPU reference implementation of the backward pass
+void backward_pass_cpu(const std::vector<float>& output, const std::vector<int>& labels, const std::vector<float>& hidden, const std::vector<float>& weights, std::vector<float>& grad_weights, std::vector<float>& grad_biases, int hidden_size, int output_size) {
+    int batch_size = labels.size();
+    std::vector<float> grad_output(batch_size * output_size, 0.0f);
+    for (int i = 0; i < batch_size * output_size; i++) {
+        int sample_idx = i / output_size;
+        int label = labels[sample_idx];
+        grad_output[i] = output[i] - (i % output_size == label ? 1.0f : 0.0f);
+    }
+
+    std::vector<float> grad_hidden(batch_size * hidden_size, 0.0f);
+    for (int s = 0; s < batch_size; s++) {
+        for (int j = 0; j < hidden_size; j++) {
+            float sum = 0.0f;
+            for (int i = 0; i < output_size; i++) {
+                int grad_idx = s * output_size + i;
+                sum += grad_output[grad_idx] * weights[j * output_size + i];
+            }
+            grad_hidden[s * hidden_size + j] = sum;
+        }
+    }
+
+    std::fill(grad_weights.begin(), grad_weights.end(), 0.0f);
+    std::fill(grad_biases.begin(), grad_biases.end(), 0.0f);
+
+    for (int s = 0; s < batch_size; s++) {
+        for (int i = 0; i < output_size; i++) {
+            int grad_idx = s * output_size + i;
+            grad_biases[i] += grad_output[grad_idx];
+            for (int j = 0; j < hidden_size; j++) {
+                int hidden_idx = s * hidden_size + j;
+                grad_weights[j * output_size + i] += hidden[hidden_idx] * grad_output[grad_idx];
+            }
+        }
+    }
+}
+
+
