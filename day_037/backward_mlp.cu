@@ -13,3 +13,14 @@ __global__ void relu_derivative_kernel(const float* input, float* output, int si
     }
 }
 
+// CUDA kernel for computing gradients of the output layer
+__global__ void output_layer_gradients_kernel(const float* output, const int* labels, float* grad_output, int size, int num_classes) {
+    int idx = blockIdx.x * blockDim.x + threadIdx.x;
+    if (idx < size) {
+        int sample_idx = idx / num_classes;
+        int label = labels[sample_idx];
+        grad_output[idx] = output[idx] - (idx % num_classes == label ? 1.0f : 0.0f);
+    }
+}
+
+
