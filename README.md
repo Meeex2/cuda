@@ -1333,3 +1333,27 @@ Implemented **Kullback-Leibler (KL) Divergence** using CUDA. This implementation
    - Explore other activation functions and their backward pass implementations.
    - Validate the implementation with larger datasets and different network architectures.
 
+   ## Day 38
+   **File:** `triton_add.py`
+
+   ### Summary
+   Implemented vector addition using Triton, a language and compiler for writing custom deep learning primitives. Compared the performance of the Triton kernel with PyTorch's built-in vector addition.
+
+   ### Key Concepts
+   1. **Triton Kernel**:
+      - Wrote a Triton kernel for vector addition.
+      - Each program processes a block of elements, loading data from global memory, performing the addition, and storing the result back to global memory.
+
+   2. **Performance Comparison**:
+      - Measured the execution time of both the Triton kernel and PyTorch's vector addition.
+      - Compared the results to ensure they match and evaluated computation time.
+
+   ### Results
+   - **Performance**
+     - Triton kernel time: 144.8014 ms
+     - PyTorch vector addition time: 0.2902 ms
+     - Validation passed!
+
+   ### Future Work
+   - Optimize the Triton kernel for better performance.
+   - Explore other operations and their Triton implementations.
