@@ -1290,3 +1290,46 @@ Implemented **Kullback-Leibler (KL) Divergence** using CUDA. This implementation
 3. **Application to Real-World Problems**:
    - Integrate KL divergence computation into machine learning pipelines, such as diffusion models or VAEs.
 
+   ## Day 37
+   **File:** `backward_mlp.cu`
+
+   ### Summary
+   Implemented the backward pass for a multi-layer perceptron (MLP) using CUDA. This implementation includes CUDA kernels for computing gradients of the ReLU activation function, output layer, hidden layer, and weights and biases. A CPU version is also provided for validation and performance comparison.
+
+   ### Key Concepts
+   1. **ReLU Derivative**:
+      - Implemented a CUDA kernel to compute the derivative of the ReLU activation function.
+      - Each thread computes the derivative for a single element of the input array.
+
+   2. **Output Layer Gradients**:
+      - Implemented a CUDA kernel to compute the gradients of the output layer.
+      - Each thread computes the gradient for a single element of the output array.
+
+   3. **Hidden Layer Gradients**:
+      - Implemented a CUDA kernel to compute the gradients of the hidden layer.
+      - Each thread computes the gradient for a single element of the hidden layer.
+
+   4. **Gradients of Weights and Biases**:
+      - Implemented a CUDA kernel to compute the gradients of the weights and biases.
+      - Each thread computes the gradient for a single weight or bias.
+
+   5. **CPU Implementation**:
+      - A CPU version of the backward pass is implemented for comparison with the GPU results.
+      - This helps in verifying the correctness of the CUDA implementation.
+
+   6. **Performance Comparison**:
+      - Measured the execution time of both the CPU and GPU implementations.
+      - Compared the results to ensure they match and evaluated the speedup achieved by using the GPU.
+
+   ### Results
+
+   - **Performance**
+      - CPU time: 0.0233857 seconds
+      - GPU time: 0.00613648 seconds
+      - Speedup: 3.81092x
+
+   ### Future Work
+   - Optimize the CUDA kernels for better performance.
+   - Explore other activation functions and their backward pass implementations.
+   - Validate the implementation with larger datasets and different network architectures.
+
