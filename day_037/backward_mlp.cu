@@ -24,3 +24,18 @@ __global__ void output_layer_gradients_kernel(const float* output, const int* la
 }
 
 
+// CUDA kernel for computing gradients of the hidden layer
+__global__ void hidden_layer_gradients_kernel(const float* grad_output, const float* weights, float* grad_hidden, int hidden_size, int output_size, int batch_size) {
+    int idx = blockIdx.x * blockDim.x + threadIdx.x;
+    if (idx < batch_size * hidden_size) {
+        int sample_idx = idx / hidden_size;
+        int j = idx % hidden_size;
+        float sum = 0.0f;
+        for (int i = 0; i < output_size; i++) {
+            int grad_idx = sample_idx * output_size + i;
+            sum += grad_output[grad_idx] * weights[j * output_size + i];
+        }
+        grad_hidden[idx] = sum;
+    }
+}
+
