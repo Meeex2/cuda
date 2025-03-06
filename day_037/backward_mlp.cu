@@ -39,3 +39,27 @@ __global__ void hidden_layer_gradients_kernel(const float* grad_output, const fl
     }
 }
 
+// CUDA kernel for computing gradients of weights and biases
+__global__ void compute_gradients_kernel(const float* input, const float* grad_output, float* grad_weights, float* grad_biases, int hidden_size, int batch_size, int output_size) {
+    int idx = blockIdx.x * blockDim.x + threadIdx.x;
+    if (idx < output_size) {
+        // Compute gradients for weights
+        for (int j = 0; j < hidden_size; j++) {
+            float sum = 0.0f;
+            for (int s = 0; s < batch_size; s++) {
+                int input_idx = s * hidden_size + j;
+                int grad_idx = s * output_size + idx;
+                sum += input[input_idx] * grad_output[grad_idx];
+            }
+            grad_weights[j * output_size + idx] = sum;
+        }
+
+        // Compute gradient for bias
+        float sum = 0.0f;
+        for (int s = 0; s < batch_size; s++) {
+            sum += grad_output[s * output_size + idx];
+        }
+        grad_biases[idx] = sum;
+    }
+}
+
