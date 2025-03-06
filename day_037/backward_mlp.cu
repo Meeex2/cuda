@@ -100,4 +100,135 @@ void backward_pass_cpu(const std::vector<float>& output, const std::vector<int>&
     }
 }
 
+// Validation function
+bool validate_results(const std::vector<float>& cpu, const std::vector<float>& gpu, int size, float tolerance = 1e-3) {
+    for (int i = 0; i < size; i++) {
+        if (std::fabs(cpu[i] - gpu[i]) > tolerance) {
+            std::cout << "Mismatch at index " << i 
+                      << ": CPU=" << cpu[i] 
+                      << ", GPU=" << gpu[i] 
+                      << std::endl;
+            return false;
+        }
+    }
+    return true;
+}
+
+int main() {
+    std::cout << "Starting program..." << std::endl;
+
+    const int hidden_size = 128;
+    const int output_size = 10;
+    const int batch_size = 1024;
+    const float learning_rate = 0.01f;
+
+    std::vector<float> output(batch_size * output_size);
+    std::vector<int> labels(batch_size);
+    std::vector<float> hidden(batch_size * hidden_size);
+    std::vector<float> weights(hidden_size * output_size);
+    std::vector<float> grad_weights_cpu(hidden_size * output_size, 0.0f);
+    std::vector<float> grad_biases_cpu(output_size, 0.0f);
+    std::vector<float> grad_weights_gpu(hidden_size * output_size, 0.0f);
+    std::vector<float> grad_biases_gpu(output_size, 0.0f);
+
+    std::mt19937 gen(42);
+    std::uniform_real_distribution<float> dist(0.0f, 1.0f);
+    std::uniform_int_distribution<int> dist_label(0, output_size - 1);
+
+    for (int i = 0; i < batch_size * output_size; i++) {
+        output[i] = dist(gen);
+    }
+    for (int i = 0; i < batch_size; i++) {
+        labels[i] = dist_label(gen);
+    }
+    for (int i = 0; i < batch_size * hidden_size; i++) {
+        hidden[i] = dist(gen);
+    }
+    for (int i = 0; i < hidden_size * output_size; i++) {
+        weights[i] = dist(gen);
+    }
+
+    std::cout << "Initialized data with random values." << std::endl;
+
+    auto cpu_start = std::chrono::high_resolution_clock::now();
+    backward_pass_cpu(output, labels, hidden, weights, grad_weights_cpu, grad_biases_cpu, hidden_size, output_size);
+    auto cpu_end = std::chrono::high_resolution_clock::now();
+    float cpu_duration = std::chrono::duration<float>(cpu_end - cpu_start).count();
+
+    std::cout << "CPU version completed in " << cpu_duration << " seconds." << std::endl;
+
+    float *d_output, *d_hidden, *d_weights, *d_grad_output, *d_grad_hidden, *d_grad_weights, *d_grad_biases;
+    int *d_labels;
+
+    cudaMalloc(&d_output, batch_size * output_size * sizeof(float));
+    cudaMalloc(&d_labels, batch_size * sizeof(int));
+    cudaMalloc(&d_hidden, batch_size * hidden_size * sizeof(float));
+    cudaMalloc(&d_weights, hidden_size * output_size * sizeof(float));
+    cudaMalloc(&d_grad_output, batch_size * output_size * sizeof(float));
+    cudaMalloc(&d_grad_hidden, batch_size * hidden_size * sizeof(float));
+    cudaMalloc(&d_grad_weights, hidden_size * output_size * sizeof(float));
+    cudaMalloc(&d_grad_biases, output_size * sizeof(float));
+
+    cudaMemcpy(d_output, output.data(), batch_size * output_size * sizeof(float), cudaMemcpyHostToDevice);
+    cudaMemcpy(d_labels, labels.data(), batch_size * sizeof(int), cudaMemcpyHostToDevice);
+    cudaMemcpy(d_hidden, hidden.data(), batch_size * hidden_size * sizeof(float), cudaMemcpyHostToDevice);
+    cudaMemcpy(d_weights, weights.data(), hidden_size * output_size * sizeof(float), cudaMemcpyHostToDevice);
+    cudaMemset(d_grad_weights, 0, hidden_size * output_size * sizeof(float));
+    cudaMemset(d_grad_biases, 0, output_size * sizeof(float));
+
+    std::cout << "Copied data to device." << std::endl;
+
+    int block_size = 256;
+    int grid_size_output = (batch_size * output_size + block_size - 1) / block_size;
+    int grid_size_hidden = (batch_size * hidden_size + block_size - 1) / block_size;
+    int grid_size_weights = (output_size + block_size - 1) / block_size;
+
+    cudaEvent_t start, stop;
+    cudaEventCreate(&start);
+    cudaEventCreate(&stop);
+
+    cudaEventRecord(start);
+
+    output_layer_gradients_kernel<<<grid_size_output, block_size>>>(d_output, d_labels, d_grad_output, batch_size * output_size, output_size);
+
+    hidden_layer_gradients_kernel<<<grid_size_hidden, block_size>>>(d_grad_output, d_weights, d_grad_hidden, hidden_size, output_size, batch_size);
+
+    compute_gradients_kernel<<<grid_size_weights, block_size>>>(d_hidden, d_grad_output, d_grad_weights, d_grad_biases, hidden_size, batch_size, output_size);
+
+    cudaEventRecord(stop);
+    cudaEventSynchronize(stop);
+
+    float gpu_duration;
+    cudaEventElapsedTime(&gpu_duration, start, stop);
+    gpu_duration /= 1000.0f;
+
+    std::cout << "GPU version completed in " << gpu_duration << " seconds." << std::endl;
+
+    cudaMemcpy(grad_weights_gpu.data(), d_grad_weights, hidden_size * output_size * sizeof(float), cudaMemcpyDeviceToHost);
+    cudaMemcpy(grad_biases_gpu.data(), d_grad_biases, output_size * sizeof(float), cudaMemcpyDeviceToHost);
+
+    std::cout << "Copied GPU results back to host." << std::endl;
+
+    bool validation_weights = validate_results(grad_weights_cpu, grad_weights_gpu, hidden_size * output_size);
+    bool validation_biases = validate_results(grad_biases_cpu, grad_biases_gpu, output_size);
+    std::cout << "Validation (weights): " << (validation_weights ? "PASSED" : "FAILED") << std::endl;
+    std::cout << "Validation (biases): " << (validation_biases ? "PASSED" : "FAILED") << std::endl;
+
+    std::cout << "CPU time: " << cpu_duration << " seconds\n";
+    std::cout << "GPU time: " << gpu_duration << " seconds\n";
+    std::cout << "Speedup: " << cpu_duration / gpu_duration << "x\n";
+
+    cudaFree(d_output);
+    cudaFree(d_labels);
+    cudaFree(d_hidden);
+    cudaFree(d_weights);
+    cudaFree(d_grad_output);
+    cudaFree(d_grad_hidden);
+    cudaFree(d_grad_weights);
+    cudaFree(d_grad_biases);
+
+    std::cout << "Program completed successfully." << std::endl;
+
+    return 0;
+}
 
