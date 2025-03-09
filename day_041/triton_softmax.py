@@ -27,3 +27,32 @@ def max_kernel(
 
     max_output_ptr = max_output_ptr + row_idx * max_output_row_stride + block_idx
     tl.store(max_output_ptr, block_max, mask=(col_start < n_cols))
+
+
+@triton.jit
+def softmax_kernel(
+    input_ptr,
+    output_ptr,
+    row_max_ptr,
+    input_row_stride,
+    output_row_stride,
+    n_cols,
+    BLOCK_SIZE: tl.constexpr,
+):
+    row_idx = tl.program_id(0)
+    block_idx = tl.program_id(1)
+
+    row_max = tl.load(row_max_ptr + row_idx)
+
+    col_start = block_idx * BLOCK_SIZE
+    col_offsets = col_start + tl.arange(0, BLOCK_SIZE)
+    row_start_ptr = input_ptr + row_idx * input_row_stride
+    input_ptrs = row_start_ptr + col_offsets
+
+    row_chunk = tl.load(input_ptrs, mask=col_offsets < n_cols, other=-float("inf"))
+    row_minus_max = row_chunk - row_max
+    exp_row = tl.exp(row_minus_max)
+
+    output_row_start_ptr = output_ptr + row_idx * output_row_stride
+    output_ptrs = output_row_start_ptr + col_offsets
+    tl.store(output_ptrs, exp_row, mask=col_offsets < n_cols)
