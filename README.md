@@ -1381,3 +1381,29 @@ Implemented **Kullback-Leibler (KL) Divergence** using CUDA. This implementation
    ### Future Work
    - Optimize the Triton kernel for better performance.
    - Explore other operations and their Triton implementations.
+
+   ## Day 40
+   **File:** `matrix_product.py`
+
+   ### Summary
+   Implemented matrix multiplication using Triton. Compared the performance of the Triton kernel with PyTorch's built-in matrix multiplication.
+
+   ### Key Concepts
+   1. **Triton Kernel**:
+      - Wrote a Triton kernel for matrix multiplication.
+      - Each program processes a block of elements, loading data from global memory, performing the multiplication, and storing the result back to global memory.
+
+   2. **Performance Comparison**:
+      - Measured the execution time of both the Triton kernel and PyTorch's matrix multiplication.
+      - Compared the results to ensure they match and evaluated computation time.
+
+   ### Results
+   - **Performance**
+      - Triton kernel time: 3.8714 ms
+      - PyTorch (GPU) matrix multiplication time: 0.3941 ms
+      - PyTorch (CPU) matrix multiplication time: 228.8835 ms
+
+   ### Future Work
+   - Optimize the Triton kernel for better performance.
+   - Explore other operations and their Triton implementations.
+   - Explore the use of Triton for other deep learning operations.
