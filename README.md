@@ -1407,3 +1407,34 @@ Implemented **Kullback-Leibler (KL) Divergence** using CUDA. This implementation
    - Optimize the Triton kernel for better performance.
    - Explore other operations and their Triton implementations.
    - Explore the use of Triton for other deep learning operations.
+
+   ## Day 41
+   **File:** `triton_softmax.py`
+
+   ### Summary
+   Implemented the softmax function using Triton. The softmax function is widely used in machine learning to convert a vector of raw scores (logits) into probabilities. Compared the performance of the Triton kernel with PyTorch's built-in softmax function.
+
+   ### Key Concepts
+   1. **Softmax Function**:
+      - Converts logits into probabilities.
+      - Formula:
+        
+        $\text{softmax}(x_i) = \frac{e^{x_i}}{\sum_{j=1}^{n} e^{x_j}}$
+
+   2. **Triton Kernel**:
+      - Wrote Triton kernels for computing the maximum value per row and the softmax function.
+      - Each program processes a block of elements, loading data from global memory, performing the necessary computations, and storing the result back to global memory.
+
+   3. **Performance Comparison**:
+      - Measured the execution time of both the Triton kernel and PyTorch's softmax function.
+      - Compared the results to ensure they match and evaluated computation time.
+
+   ### Results
+   - **Performance**
+     - Triton kernel time: 5.8584 ms
+     - PyTorch (GPU) Softmax time: 0.9866 ms
+     - Validation passed!
+
+   ### Future Work
+   - Optimize the Triton kernel for better performance.
+   - Explore other operations and their Triton implementations.
