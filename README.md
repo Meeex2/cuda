@@ -1438,3 +1438,15 @@ Implemented **Kullback-Leibler (KL) Divergence** using CUDA. This implementation
    ### Future Work
    - Optimize the Triton kernel for better performance.
    - Explore other operations and their Triton implementations.
+
+   ## Day 42
+   **File:** `triton_relu.py`
+
+   ### Summary
+   Implemented the ReLU (Rectified Linear Unit) function using Triton. Compared the performance of the Triton kernel with a CPU implementation.
+
+   ### Results
+   - **Performance**
+      - Triton Execution Time: 0.002692 seconds
+      - CPU Execution Time: 0.039735 seconds
+   - Validation passed!
