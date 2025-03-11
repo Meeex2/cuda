@@ -1450,3 +1450,19 @@ Implemented **Kullback-Leibler (KL) Divergence** using CUDA. This implementation
       - Triton Execution Time: 0.002692 seconds
       - CPU Execution Time: 0.039735 seconds
    - Validation passed!
+
+   ## Day 43
+   **File:** `triton_silu.py`
+
+   ### Summary
+   Implemented the SiLU (Sigmoid Linear Unit) function using Triton. Compared the performance of the Triton kernel with a CPU implementation.
+
+ 
+    **Performance**
+      - Triton Execution Time: 0.003542 seconds
+      - CPU Execution Time: 0.612337 seconds
+
+   ### Future Work
+   - Optimize the Triton kernel for better performance.
+   - Explore other activation functions and their Triton implementations.
+   - Validate the implementation with larger datasets and different parameters.
