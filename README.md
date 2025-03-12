@@ -1466,3 +1466,38 @@ Implemented **Kullback-Leibler (KL) Divergence** using CUDA. This implementation
    - Optimize the Triton kernel for better performance.
    - Explore other activation functions and their Triton implementations.
    - Validate the implementation with larger datasets and different parameters.
+
+   ## Day 44
+   **File:** `triton_gelu.py`
+
+   ### Summary
+   Implemented the GELU (Gaussian Error Linear Unit) activation function using Triton. The GELU function is used in neural networks to introduce non-linearity. This implementation includes both a Triton kernel and a CPU version for comparison.
+
+   ### Key Concepts
+   1. **GELU Activation Function**:
+      - The GELU function is defined as:
+        
+        $\text{GELU}(x) = x \cdot 0.5 \cdot (1 + \text{erf}(x / \sqrt{2}))$
+        
+      - It smoothly approximates the ReLU function and is used in various deep learning models.
+
+   2. **Triton Kernel for GELU**:
+      - Each program processes a block of elements, loading data from global memory, performing the GELU computation, and storing the result back to global memory.
+
+   3. **CPU Implementation**:
+      - A CPU version of the GELU function is implemented for comparison with the Triton results.
+      - This helps in verifying the correctness of the Triton implementation.
+
+   4. **Performance Comparison**:
+      - Measured the execution time of both the Triton and CPU implementations.
+      - Compared the results to ensure they match and evaluated the speedup achieved by using Triton.
+
+   ### Results
+   - **Performance**
+     - Triton Execution Time: 0.002354 seconds
+     - CPU Execution Time: 0.779846 seconds
+
+   ### Future Work
+   - Optimize the Triton kernel for better performance.
+   - Explore other activation functions and their Triton implementations.
+   - Validate the implementation with larger datasets and different parameters.
