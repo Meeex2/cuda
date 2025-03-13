@@ -1501,3 +1501,38 @@ Implemented **Kullback-Leibler (KL) Divergence** using CUDA. This implementation
    - Optimize the Triton kernel for better performance.
    - Explore other activation functions and their Triton implementations.
    - Validate the implementation with larger datasets and different parameters.
+
+   ## Day 45
+   **File:** `triton_swish.py`
+
+   ### Summary
+   Implemented the Swish activation function using Triton. The Swish function is used in neural networks to introduce non-linearity and has been shown to perform better than ReLU in some cases. This implementation includes both a Triton kernel and a CPU version for comparison.
+
+   ### Key Concepts
+   1. **Swish Activation Function**:
+      - The Swish function is defined as:
+        
+        $\text{Swish}(x) = x \cdot \text{sigmoid}(x)$
+        
+      - It combines the input with the sigmoid function to create a smooth, non-linear activation.
+
+   2. **Triton Kernel for Swish**:
+      - Each program processes a block of elements, loading data from global memory, performing the Swish computation, and storing the result back to global memory.
+
+   3. **CPU Implementation**:
+      - A CPU version of the Swish function is implemented for comparison with the Triton results.
+      - This helps in verifying the correctness of the Triton implementation.
+
+   4. **Performance Comparison**:
+      - Measured the execution time of both the Triton and CPU implementations.
+      - Compared the results to ensure they match and evaluated the speedup achieved by using Triton.
+
+   ### Results
+   - **Performance**
+     - Triton Execution Time: 0.003623 seconds
+     - CPU Execution Time: 0.772183 seconds
+
+   ### Future Work
+   - Optimize the Triton kernel for better performance.
+   - Explore other activation functions and their Triton implementations.
+   - Validate the implementation with larger datasets and different parameters.
