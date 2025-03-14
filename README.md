@@ -1536,3 +1536,39 @@ Implemented **Kullback-Leibler (KL) Divergence** using CUDA. This implementation
    - Optimize the Triton kernel for better performance.
    - Explore other activation functions and their Triton implementations.
    - Validate the implementation with larger datasets and different parameters.
+
+   ## Day 46
+   **File:** `triton_swiglu.py`
+
+   ### Summary
+   Implemented the SwiGLU (Swish Gated Linear Unit) activation function using Triton. The SwiGLU function is used in neural networks to introduce non-linearity and gating mechanisms, combining the Swish activation function with a gating mechanism. This implementation includes both a Triton kernel and a CPU version for comparison.
+
+   ### Key Concepts
+   1. **SwiGLU Activation Function**:
+      - The SwiGLU function combines the Swish activation with a gating mechanism.
+      - The formula for SwiGLU is:
+        
+        $\text{SwiGLU}(x, y) = \text{Swish}(x) \cdot y$
+        
+      - Here, $x$ and $y$ are the input tensors, and Swish is the activation function defined as $x \cdot \text{sigmoid}(x)$.
+
+   2. **Triton Kernel for SwiGLU**:
+      - Each program processes a block of elements, loading data from global memory, performing the SwiGLU computation, and storing the result back to global memory.
+
+   3. **CPU Implementation**:
+      - A CPU version of the SwiGLU function is implemented for comparison with the Triton results.
+      - This helps in verifying the correctness of the Triton implementation.
+
+   4. **Performance Comparison**:
+      - Measured the execution time of both the Triton and CPU implementations.
+      - Compared the results to ensure they match and evaluated the speedup achieved by using Triton.
+
+   ### Results
+   - **Performance**
+     - Triton Execution Time: 0.004779 seconds
+     - CPU Execution Time: 0.159479 seconds
+
+   ### Future Work
+   - Optimize the Triton kernel for better performance.
+   - Explore other activation functions and their Triton implementations.
+   - Validate the implementation with larger datasets and different parameters.
