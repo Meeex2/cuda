@@ -21,3 +21,21 @@ void relu2_cpu(float* data, int size) {
     }
 }
 
+// Function to initialize data with random values
+void initializeData(float* data, int size) {
+    for (int i = 0; i < size; ++i) {
+        data[i] = static_cast<float>(rand()) / RAND_MAX - 0.5f;  // Random values between -0.5 and 0.5
+    }
+}
+
+// Function to compare two arrays for correctness
+bool compareArrays(const float* a, const float* b, int size) {
+    for (int i = 0; i < size; ++i) {
+        if (fabs(a[i] - b[i]) > 1e-5) {
+            std::cerr << "Mismatch at index " << i << ": " << a[i] << " != " << b[i] << std::endl;
+            return false;
+        }
+    }
+    return true;
+}
+
