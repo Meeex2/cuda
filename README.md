@@ -1572,3 +1572,58 @@ Implemented **Kullback-Leibler (KL) Divergence** using CUDA. This implementation
    - Optimize the Triton kernel for better performance.
    - Explore other activation functions and their Triton implementations.
    - Validate the implementation with larger datasets and different parameters.
+
+   ## Day 47
+   **File:** `relu2.cu`
+
+   ### Summary
+   Implemented the ReLU² (Squared ReLU) activation function using CUDA. ReLU² squares the positive inputs while zeroing out negative values. This implementation includes both a CUDA kernel and a CPU version for comparison.
+
+   ### Key Concepts
+   1. **ReLU² Activation Function**:
+      - The ReLU² function is defined as:
+        
+        $\text{ReLU}^2(x) = \begin{cases} 
+        x^2 & \text{if } x > 0 \\
+        0 & \text{if } x \leq 0 
+        \end{cases}$
+        
+      - It introduces non-linearity while maintaining a steeper gradient for positive inputs compared to standard ReLU.
+
+   2. **CUDA Kernel for ReLU²**:
+      - Each thread computes the ReLU² activation for a single element of the input array.
+      - The kernel evaluates whether the input is positive, and if so, squares it; otherwise, it outputs zero.
+
+   3. **CPU Implementation**:
+      - A CPU version of the ReLU² function is implemented for comparison with the GPU results.
+      - This helps in verifying the correctness of the CUDA implementation.
+
+   4. **Performance Comparison**:
+      - Measured the execution time of both the CPU and GPU implementations.
+      - GPU implementation achieved a substantial speedup over the CPU version.
+
+   ### Advantages of ReLU² Over Other Activations
+
+   1. **Enhanced Feature Learning**:
+      - The squared output for positive values can help neural networks learn more expressive features compared to standard ReLU.
+      - The quadratic behavior provides stronger activation for more significant features while still having the sparsity benefits of ReLU.
+
+   2. **Improved Gradient Flow**:
+      - ReLU² has a larger gradient for positive inputs compared to standard ReLU, potentially leading to faster learning for strongly activated neurons.
+      - The gradient increases linearly with the input value, unlike ReLU where the gradient is constant.
+
+   3. **Maintaining Sparsity**:
+      - Like standard ReLU, ReLU² induces sparsity in neural networks by outputting zero for negative inputs, which can help with regularization.
+
+   4. **Computational Efficiency**:
+      - ReLU² is computationally efficient, involving only a comparison and a multiplication operation.
+
+   ### Results
+   - **Performance**
+     - CPU Execution Time: 9.94267 ms
+     - GPU Execution Time: 0.160084 ms
+     - Speedup: ~62x
+
+   ### Future Work
+   - Investigate the impact of ReLU² on model convergence and accuracy.
+   - Explore techniques to address potential numerical stability issues with large positive inputs.
