@@ -106,4 +106,37 @@ __global__ void dequantize_q4_kernel(const uint8_t* quantized, const float* scal
     }
 }
 
+// CPU reference implementation for 4-bit quantization
+void quantize_q4_cpu(const float* input, uint8_t* quantized, float* scales, int num_elements) {
+    int num_blocks = (num_elements + BLOCK_SIZE - 1) / BLOCK_SIZE;
+    for (int b = 0; b < num_blocks; ++b) {
+        int start = b * BLOCK_SIZE;
+        int end = std::min(start + BLOCK_SIZE, num_elements);
+        float absmax = 0.0f;
+
+        // Compute absmax
+        for (int i = start; i < end; ++i) {
+            absmax = std::max(absmax, std::abs(input[i]));
+        }
+
+        // Compute scale
+        float scale = (absmax == 0.0f) ? 1.0f : (absmax / 7.0f);
+        scales[b] = scale;
+
+        // Quantize and pack
+        std::vector<uint8_t> qs(BLOCK_SIZE, 8);
+        for (int i = start; i < end; ++i) {
+            float q_val = std::round(input[i] / scale);
+            q_val = std::max(std::min(q_val, 7.0f), -8.0f);
+            qs[i - start] = static_cast<uint8_t>(q_val + 8.0f);
+        }
+
+        // Pack into bytes
+        for (int i = 0; i < BLOCK_SIZE / 2; ++i) {
+            quantized[b * (BLOCK_SIZE / 2) + i] = (qs[2 * i] << 4) | qs[2 * i + 1];
+        }
+    }
+}
+
+
 
