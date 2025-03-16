@@ -68,3 +68,42 @@ __global__ void quantize_q4_kernel(const float* input, uint8_t* quantized, float
     }
 }
 
+// CUDA kernel for 4-bit dequantization
+__global__ void dequantize_q4_kernel(const uint8_t* quantized, const float* scales, float* output, int num_elements) {
+    __shared__ float s_scale;
+    __shared__ uint8_t q_packed[BLOCK_SIZE / 2];
+    __shared__ uint8_t q_unpacked[BLOCK_SIZE];
+
+    int block_idx = blockIdx.x;
+    int thread_idx = threadIdx.x;
+    int element_start = block_idx * BLOCK_SIZE;
+    int element_end = min(element_start + BLOCK_SIZE, num_elements);
+
+    // Load scale
+    if (thread_idx == 0) {
+        s_scale = scales[block_idx];
+    }
+    __syncthreads();
+
+    // Load packed data
+    if (thread_idx < BLOCK_SIZE / 2) {
+        q_packed[thread_idx] = quantized[block_idx * (BLOCK_SIZE / 2) + thread_idx];
+    }
+    __syncthreads();
+
+    // Unpack 4-bit values
+    if (thread_idx < BLOCK_SIZE / 2) {
+        uint8_t packed = q_packed[thread_idx];
+        q_unpacked[2 * thread_idx] = (packed >> 4) & 0x0F;
+        q_unpacked[2 * thread_idx + 1] = packed & 0x0F;
+    }
+    __syncthreads();
+
+    // Dequantize
+    if (element_start + thread_idx < num_elements) {
+        uint8_t q = q_unpacked[thread_idx];
+        output[element_start + thread_idx] = (static_cast<float>(q) - 8.0f) * s_scale;
+    }
+}
+
+
