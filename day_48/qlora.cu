@@ -138,5 +138,77 @@ void quantize_q4_cpu(const float* input, uint8_t* quantized, float* scales, int 
     }
 }
 
+// Main function for testing
+int main() {
+    const int num_elements = 1024;
+    std::vector<float> h_input(num_elements);
+    std::vector<uint8_t> h_quantized_cpu(num_elements / 2), h_quantized_gpu(num_elements / 2);
+    std::vector<float> h_scales_cpu((num_elements + BLOCK_SIZE - 1) / BLOCK_SIZE);
+    std::vector<float> h_scales_gpu((num_elements + BLOCK_SIZE - 1) / BLOCK_SIZE);
+    std::vector<float> h_output_gpu(num_elements);
+
+    // Generate random input
+    for (int i = 0; i < num_elements; ++i) {
+        h_input[i] = (rand() / (float)RAND_MAX) * 2.0f - 1.0f; // [-1, 1]
+    }
+
+    // Allocate device memory
+    float *d_input, *d_scales, *d_output;
+    uint8_t *d_quantized;
+    cudaMalloc(&d_input, num_elements * sizeof(float));
+    cudaMalloc(&d_quantized, (num_elements / 2) * sizeof(uint8_t));
+    cudaMalloc(&d_scales, ((num_elements + BLOCK_SIZE - 1) / BLOCK_SIZE) * sizeof(float));
+    cudaMalloc(&d_output, num_elements * sizeof(float));
+
+    // Copy input to device
+    cudaMemcpy(d_input, h_input.data(), num_elements * sizeof(float), cudaMemcpyHostToDevice);
+
+    // Launch quantization kernel
+    dim3 grid((num_elements + BLOCK_SIZE - 1) / BLOCK_SIZE);
+    quantize_q4_kernel<<<grid, BLOCK_SIZE>>>(d_input, d_quantized, d_scales, num_elements);
+
+    // Copy results back
+    cudaMemcpy(h_quantized_gpu.data(), d_quantized, (num_elements / 2) * sizeof(uint8_t), cudaMemcpyDeviceToHost);
+    cudaMemcpy(h_scales_gpu.data(), d_scales, ((num_elements + BLOCK_SIZE - 1) / BLOCK_SIZE) * sizeof(float), cudaMemcpyDeviceToHost);
+
+    // Run CPU version
+    quantize_q4_cpu(h_input.data(), h_quantized_cpu.data(), h_scales_cpu.data(), num_elements);
+
+    // Compare scales and quantized data
+    bool error = false;
+    for (int i = 0; i < h_scales_cpu.size(); ++i) {
+        if (fabs(h_scales_cpu[i] - h_scales_gpu[i]) > 1e-6) {
+            printf("Scale mismatch at block %d: CPU %f vs GPU %f\n", i, h_scales_cpu[i], h_scales_gpu[i]);
+            error = true;
+        }
+    }
+    for (int i = 0; i < num_elements / 2; ++i) {
+        if (h_quantized_cpu[i] != h_quantized_gpu[i]) {
+            printf("Quantized data mismatch at byte %d: CPU 0x%02x vs GPU 0x%02x\n", i, h_quantized_cpu[i], h_quantized_gpu[i]);
+            error = true;
+        }
+    }
+
+    // Dequantize GPU data
+    dequantize_q4_kernel<<<grid, BLOCK_SIZE>>>(d_quantized, d_scales, d_output, num_elements);
+    cudaMemcpy(h_output_gpu.data(), d_output, num_elements * sizeof(float), cudaMemcpyDeviceToHost);
+
+    // Compare dequantized with original
+    float rmse = 0.0f;
+    for (int i = 0; i < num_elements; ++i) {
+        float diff = h_input[i] - h_output_gpu[i];
+        rmse += diff * diff;
+    }
+    rmse = sqrtf(rmse / num_elements);
+    printf("Dequantization RMSE: %e\n", rmse);
+
+    // Cleanup
+    cudaFree(d_input);
+    cudaFree(d_quantized);
+    cudaFree(d_scales);
+    cudaFree(d_output);
+
+    return error ? 1 : 0;
+}
 
 
