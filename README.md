@@ -1627,3 +1627,38 @@ Implemented **Kullback-Leibler (KL) Divergence** using CUDA. This implementation
    ### Future Work
    - Investigate the impact of ReLU² on model convergence and accuracy.
    - Explore techniques to address potential numerical stability issues with large positive inputs.
+
+   ## Day 48
+   **File:** `qlora_quant.cu`
+
+   ### Summary
+   Implemented the first stage of the QLoRA (Quantization for Low-Rank Adaptation) algorithm using CUDA. QLoRA is a technique that enables fine-tuning of large language models with reduced memory requirements by quantizing the model weights. This implementation focuses on the quantization aspect of QLoRA, where FP16 weights are quantized to INT4 representation.
+
+   ### Key Concepts
+   1. **Weight Quantization**:
+      - Quantized FP16 weights to INT4 format to reduce memory requirements.
+      - Used a block-wise quantization approach where each block of weights is quantized independently.
+      - Computed scaling factors for each block to minimize quantization error.
+
+   2. **CUDA Kernel for Quantization**:
+      - Each thread processes a subset of weights within a block.
+      - Computes the absolute maximum value within each block to determine the scaling factor.
+      - Quantizes the weights by scaling and rounding to the nearest integer within the INT4 range [-8, 7].
+
+   3. **CUDA Kernel for Dequantization**:
+      - Converts the quantized INT4 weights back to FP16 format.
+      - Uses the scaling factors to recover the approximate original values.
+      - Enables verification of the quantization-dequantization process by measuring the RMSE.
+
+   4. **Performance and Accuracy**:
+      - Measured the Root Mean Square Error (RMSE) between the original weights and the dequantized weights.
+      - The RMSE of 4.064262e-02 indicates a reasonable approximation, suitable for fine-tuning purposes.
+
+   ### Results
+   - **Dequantization RMSE**: 4.064262e-02
+
+   ### Future Work
+   - Implement the second stage of QLoRA: Low-Rank Adaptation (LoRA) for efficient fine-tuning.
+   - Explore different quantization strategies to improve accuracy.
+   - Benchmark the performance and memory savings of the complete QLoRA implementation.
+   - Test the impact of quantization on model accuracy for various downstream tasks.
