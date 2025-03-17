@@ -1662,3 +1662,40 @@ Implemented **Kullback-Leibler (KL) Divergence** using CUDA. This implementation
    - Explore different quantization strategies to improve accuracy.
    - Benchmark the performance and memory savings of the complete QLoRA implementation.
    - Test the impact of quantization on model accuracy for various downstream tasks.
+
+   ## Day 49
+   **File:** `geglu_triton.py`
+
+   ### Summary
+   Implemented the GEGLU (Gaussian Error Linear Unit Gated) activation function using Triton. GEGLU is a variation of the GLU (Gated Linear Unit) that uses GELU activation instead of sigmoid for the gating mechanism. This implementation includes both a Triton kernel and a CPU version for comparison.
+
+   ### Key Concepts
+   1. **GEGLU Activation Function**:
+      - The GEGLU function combines the GELU activation with a gating mechanism.
+      - The formula for GEGLU is:
+        
+        $\text{GEGLU}(x) = \text{GELU}(x_1) \cdot x_2$
+        
+      - Here, $x_1$ and $x_2$ are the first and second halves of the input tensor, and GELU is the Gaussian Error Linear Unit activation function.
+
+   2. **Triton Kernel for GEGLU**:
+      - Each program processes a block of elements, loading data from global memory, performing the GEGLU computation, and storing the result back to global memory.
+      - The kernel first computes the GELU activation for the first half of the input tensor, then multiplies it element-wise with the second half.
+
+   3. **CPU Implementation**:
+      - A CPU version of the GEGLU function is implemented for comparison with the Triton results.
+      - This helps in verifying the correctness of the Triton implementation.
+
+   4. **Performance Comparison**:
+      - Measured the execution time of both the Triton and CPU implementations.
+      - Compared the results to ensure they match and evaluated the speedup achieved by using Triton.
+
+   ### Results
+   - **Performance**
+     - Triton Execution Time: 0.009176 seconds
+     - CPU Execution Time: 0.250023 seconds
+     - Speedup: ~27.2x
+
+   ### Future Work
+   - Optimize the Triton kernel for better performance.
+   - Explore other activation functions and their Triton implementations.
