@@ -214,3 +214,141 @@ void quantize_nf4_cpu(const float* input, uint8_t* quantized, float* scales, int
     }
 }
 
+// ------------------------------------------------------------------
+// Main testing function
+int main() {
+    const int num_elements = 1024;
+    int num_blocks = (num_elements + BLOCK_SIZE - 1) / BLOCK_SIZE;
+    
+    printf("Testing NF4 quantization with %d elements in %d blocks\n", num_elements, num_blocks);
+    
+    // Host vectors
+    std::vector<float> h_input(num_elements);
+    std::vector<uint8_t> h_quantized_nf4_cpu(num_elements / 2, 0);
+    std::vector<uint8_t> h_quantized_nf4_gpu(num_elements / 2, 0);
+    std::vector<float> h_scales_nf4_cpu(num_blocks);
+    std::vector<float> h_scales_nf4_gpu(num_blocks);
+    std::vector<uint8_t> h_qscales(num_blocks);
+    std::vector<float> h_scales_dq(num_blocks);
+    std::vector<float> h_output_nf4_gpu(num_elements);
+    
+    // Seed random number generator for reproducibility
+    srand(42);
+    
+    // Generate random input data (uniform [-1,1])
+    for (int i = 0; i < num_elements; ++i) {
+        h_input[i] = (rand() / (float)RAND_MAX) * 2.0f - 1.0f;
+    }
+    
+    // Allocate device memory
+    float *d_input, *d_scales, *d_output;
+    uint8_t *d_quantized, *d_qscales;
+    CHECK_CUDA_ERROR(cudaMalloc(&d_input, num_elements * sizeof(float)));
+    CHECK_CUDA_ERROR(cudaMalloc(&d_quantized, (num_elements / 2) * sizeof(uint8_t)));
+    CHECK_CUDA_ERROR(cudaMalloc(&d_scales, num_blocks * sizeof(float)));
+    CHECK_CUDA_ERROR(cudaMalloc(&d_output, num_elements * sizeof(float)));
+    CHECK_CUDA_ERROR(cudaMalloc(&d_qscales, num_blocks * sizeof(uint8_t)));
+    
+    // Initialize device memory to zero (important for quantization)
+    CHECK_CUDA_ERROR(cudaMemset(d_quantized, 0, (num_elements / 2) * sizeof(uint8_t)));
+    
+    // Copy input data to device
+    CHECK_CUDA_ERROR(cudaMemcpy(d_input, h_input.data(), num_elements * sizeof(float), cudaMemcpyHostToDevice));
+    
+    // Run GPU quantization
+    printf("Running GPU NF4 quantization...\n");
+    quantize_nf4_kernel<<<num_blocks, BLOCK_SIZE>>>(d_input, d_quantized, d_scales, num_elements);
+    CHECK_CUDA_ERROR(cudaDeviceSynchronize());
+    CHECK_CUDA_ERROR(cudaGetLastError());
+    
+    // Copy GPU results back to host
+    CHECK_CUDA_ERROR(cudaMemcpy(h_quantized_nf4_gpu.data(), d_quantized, (num_elements / 2) * sizeof(uint8_t), cudaMemcpyDeviceToHost));
+    CHECK_CUDA_ERROR(cudaMemcpy(h_scales_nf4_gpu.data(), d_scales, num_blocks * sizeof(float), cudaMemcpyDeviceToHost));
+    
+    // Run CPU reference quantization
+    printf("Running CPU reference NF4 quantization...\n");
+    quantize_nf4_cpu(h_input.data(), h_quantized_nf4_cpu.data(), h_scales_nf4_cpu.data(), num_elements);
+    
+    // Compare CPU and GPU results
+    bool error = false;
+    int scale_mismatches = 0;
+    int data_mismatches = 0;
+    
+    printf("Checking scale factors...\n");
+    for (int i = 0; i < num_blocks; ++i) {
+        if (fabs(h_scales_nf4_cpu[i] - h_scales_nf4_gpu[i]) > 1e-5) {
+            if (scale_mismatches < 10) {
+                printf("Scale mismatch at block %d: CPU %f vs GPU %f\n", i, h_scales_nf4_cpu[i], h_scales_nf4_gpu[i]);
+            }
+            scale_mismatches++;
+            error = true;
+        }
+    }
+    
+    printf("Checking quantized data...\n");
+    for (int i = 0; i < num_elements / 2; ++i) {
+        if (h_quantized_nf4_cpu[i] != h_quantized_nf4_gpu[i]) {
+            if (data_mismatches < 10) {
+                printf("Quantized data mismatch at byte %d: CPU 0x%02x vs GPU 0x%02x\n", i, h_quantized_nf4_cpu[i], h_quantized_nf4_gpu[i]);
+            }
+            data_mismatches++;
+            error = true;
+        }
+    }
+    
+    printf("Total mismatches: %d scale values, %d quantized bytes\n", scale_mismatches, data_mismatches);
+    
+    // Double quantization of scales
+    printf("\nTesting double quantization of scales...\n");
+    float global_max = 0.0f;
+    for (int i = 0; i < num_blocks; ++i) {
+        global_max = std::max(global_max, h_scales_nf4_gpu[i]);
+    }
+    
+    int threads_per_block = 256;
+    int blocks_scales = (num_blocks + threads_per_block - 1) / threads_per_block;
+    
+    double_quantize_scales_kernel<<<blocks_scales, threads_per_block>>>(d_scales, d_qscales, global_max, num_blocks);
+    CHECK_CUDA_ERROR(cudaDeviceSynchronize());
+    CHECK_CUDA_ERROR(cudaGetLastError());
+    
+    CHECK_CUDA_ERROR(cudaMemcpy(h_qscales.data(), d_qscales, num_blocks * sizeof(uint8_t), cudaMemcpyDeviceToHost));
+    
+    double_dequantize_scales_kernel<<<blocks_scales, threads_per_block>>>(d_qscales, d_scales, global_max, num_blocks);
+    CHECK_CUDA_ERROR(cudaDeviceSynchronize());
+    CHECK_CUDA_ERROR(cudaGetLastError());
+    
+    CHECK_CUDA_ERROR(cudaMemcpy(h_scales_dq.data(), d_scales, num_blocks * sizeof(float), cudaMemcpyDeviceToHost));
+    
+    printf("Double quantization results:\n");
+    for (int i = 0; i < num_blocks; ++i) {
+        printf("Block %d: Original scale = %f, quantized scale = %u, dequantized scale = %f\n",
+               i, h_scales_nf4_gpu[i], h_qscales[i], h_scales_dq[i]);
+    }
+    
+    // Dequantize data using the double-quantized scales
+    printf("\nTesting NF4 dequantization...\n");
+    dequantize_nf4_kernel<<<num_blocks, BLOCK_SIZE>>>(d_quantized, d_scales, d_output, num_elements);
+    CHECK_CUDA_ERROR(cudaDeviceSynchronize());
+    CHECK_CUDA_ERROR(cudaGetLastError());
+    
+    CHECK_CUDA_ERROR(cudaMemcpy(h_output_nf4_gpu.data(), d_output, num_elements * sizeof(float), cudaMemcpyDeviceToHost));
+    
+    // Compute RMSE to verify quality of quantization+dequantization
+    float rmse = 0.0f;
+    for (int i = 0; i < num_elements; ++i) {
+        float diff = h_input[i] - h_output_nf4_gpu[i];
+        rmse += diff * diff;
+    }
+    rmse = sqrtf(rmse / num_elements);
+    printf("NF4 Dequantization RMSE: %e\n", rmse);
+    
+    // Cleanup
+    cudaFree(d_input);
+    cudaFree(d_quantized);
+    cudaFree(d_scales);
+    cudaFree(d_output);
+    cudaFree(d_qscales);
+    
+    return error ? 1 : 0;
+}
