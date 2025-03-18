@@ -147,4 +147,70 @@ __global__ void dequantize_nf4_kernel(const uint8_t* quantized, const float* sca
     }
 }
 
+// ------------------------------------------------------------------
+// Kernel: double quantization of scales
+__global__ void double_quantize_scales_kernel(const float* scales, uint8_t* q_scales, float global_max, int num_blocks) {
+    int idx = blockIdx.x * blockDim.x + threadIdx.x;
+    if (idx < num_blocks) {
+        float norm = (global_max > 0) ? scales[idx] / global_max : 0.0f;
+        uint8_t q = static_cast<uint8_t>(roundf(norm * 15.0f));
+        q_scales[idx] = q;
+    }
+}
+
+// Kernel for dequantizing scales
+__global__ void double_dequantize_scales_kernel(const uint8_t* q_scales, float* scales_dq, float global_max, int num_blocks) {
+    int idx = blockIdx.x * blockDim.x + threadIdx.x;
+    if (idx < num_blocks) {
+        scales_dq[idx] = (q_scales[idx] / 15.0f) * global_max;
+    }
+}
+
+// ------------------------------------------------------------------
+// CPU reference implementation for NF4 quantization
+void quantize_nf4_cpu(const float* input, uint8_t* quantized, float* scales, int num_elements) {
+    int num_blocks = (num_elements + BLOCK_SIZE - 1) / BLOCK_SIZE;
+    
+    for (int b = 0; b < num_blocks; ++b) {
+        int start = b * BLOCK_SIZE;
+        int end = std::min(start + BLOCK_SIZE, num_elements);
+        
+        // 1. Compute absmax for the block
+        float absmax = 0.0f;
+        for (int i = start; i < end; ++i) {
+            absmax = std::max(absmax, std::abs(input[i]));
+        }
+        
+        // 2. Compute scale factor (absmax or 1 if absmax is 0)
+        float scale = (absmax == 0.0f) ? 1.0f : absmax;
+        scales[b] = scale;
+        
+        // 3. Quantize each element in the block
+        std::vector<uint8_t> indices(BLOCK_SIZE, 0);
+        for (int i = start; i < end; ++i) {
+            float norm = input[i] / scale;
+            
+            // Find closest NF4 level
+            float min_diff = std::abs(norm - h_nf4_levels[0]);
+            int best_idx = 0;
+            
+            for (int j = 1; j < 16; ++j) {
+                float diff = std::abs(norm - h_nf4_levels[j]);
+                if (diff < min_diff) {
+                    min_diff = diff;
+                    best_idx = j;
+                }
+            }
+            
+            indices[i - start] = static_cast<uint8_t>(best_idx);
+        }
+        
+        // 4. Pack two 4-bit indices per byte
+        for (int i = 0; i < BLOCK_SIZE/2; ++i) {
+            uint8_t high = indices[2 * i];
+            uint8_t low = indices[2 * i + 1];
+            quantized[b * (BLOCK_SIZE/2) + i] = (high << 4) | (low & 0x0F);
+        }
+    }
+}
 
