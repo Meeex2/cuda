@@ -109,3 +109,42 @@ __global__ void quantize_nf4_kernel(const float* input, uint8_t* quantized, floa
     }
 }
 
+
+// ------------------------------------------------------------------
+// Kernel: NF4 dequantization
+__global__ void dequantize_nf4_kernel(const uint8_t* quantized, const float* scales, float* output, int num_elements) {
+    __shared__ float s_scale;
+    __shared__ uint8_t s_packed[BLOCK_SIZE/2];
+    __shared__ uint8_t s_indices[BLOCK_SIZE];
+
+    int block_idx = blockIdx.x;
+    int thread_idx = threadIdx.x;
+    int element_idx = block_idx * BLOCK_SIZE + thread_idx;
+    
+    // Load scale for this block
+    if (thread_idx == 0) {
+        s_scale = scales[block_idx];
+    }
+    
+    // Load packed quantized data
+    if (thread_idx < BLOCK_SIZE/2) {
+        s_packed[thread_idx] = quantized[block_idx * (BLOCK_SIZE/2) + thread_idx];
+    }
+    __syncthreads();
+    
+    // Unpack two 4-bit indices per byte
+    if (thread_idx < BLOCK_SIZE/2) {
+        uint8_t packed = s_packed[thread_idx];
+        s_indices[2 * thread_idx] = (packed >> 4) & 0x0F;
+        s_indices[2 * thread_idx + 1] = packed & 0x0F;
+    }
+    __syncthreads();
+    
+    // Dequantize: map index to level and scale
+    if (element_idx < num_elements) {
+        uint8_t idx = s_indices[thread_idx];
+        output[element_idx] = d_nf4_levels[idx] * s_scale;
+    }
+}
+
+
