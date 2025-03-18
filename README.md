@@ -1698,4 +1698,38 @@ Implemented **Kullback-Leibler (KL) Divergence** using CUDA. This implementation
 
    ### Future Work
    - Optimize the Triton kernel for better performance.
-   - Explore other activation functions and their Triton implementations.
+   ## Day 50
+   **File:** `qlora_v2.cu`
+
+   ### Summary
+   Implemented the NF4 (NormalFloat 4-bit) quantization and dequantization algorithm for QLoRA using CUDA. This implementation focuses on efficiently quantizing floating-point weights to a 4-bit format with optimized representation, enabling significant memory reduction while preserving model quality for large language models.
+
+   ### Key Concepts
+   1. **NF4 Quantization**:
+      - Uses a non-uniform quantization scheme with pre-defined quantization levels optimized for weight distributions in neural networks
+      - Performs block-wise quantization where each block of weights is quantized independently
+      - Computes a scaling factor for each block to preserve the dynamic range of values
+
+   2. **CUDA Kernels**:
+      - `quantize_nf4_kernel`: Converts floating-point values to 4-bit NF4 format by finding the closest match among predefined levels
+      - `dequantize_nf4_kernel`: Converts the quantized NF4 values back to floating-point format
+      - `double_quantize_scales_kernel`: Performs a second level of quantization on the scale factors to further reduce memory usage
+
+   3. **Double Quantization**:
+      - First quantizes weights to NF4 format with per-block scaling
+      - Then quantizes the scale factors themselves to 4 bits, further reducing memory requirements
+      - This technique is a key innovation in QLoRA that enables efficient fine-tuning of very large models
+
+   4. **Packing Optimization**:
+      - Packs two 4-bit indices into a single byte to optimize memory usage
+      - Uses shared memory to improve efficiency in quantization and dequantization operations
+
+   ### Results
+   - **Quantization Validation**: Perfect match between CPU and GPU implementations
+   - **Double Quantization**: Successfully quantized scale factors to 4-bit representation
+   - **Dequantization RMSE**: 9.796087e-02, indicating a good approximation of original values
+   - **Memory Reduction**: From 32-bit floating point to 4-bit, achieving 8x memory reduction
+
+   ### Future Work
+   - Implement the Low-Rank Adaptation (LoRA) part of QLoRA
+   - Explore other quantization levels and schemes to improve accuracy
