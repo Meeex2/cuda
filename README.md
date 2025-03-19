@@ -1733,3 +1733,40 @@ Implemented **Kullback-Leibler (KL) Divergence** using CUDA. This implementation
    ### Future Work
    - Implement the Low-Rank Adaptation (LoRA) part of QLoRA
    - Explore other quantization levels and schemes to improve accuracy
+
+   ## Day 51
+   **File:** `mish_triton.py`
+
+   ### Summary
+   Implemented the Mish activation function using Triton. Mish is a self-regularized non-monotonic activation function that combines properties of both ReLU and Swish activations. This implementation includes both a Triton kernel and a CPU version for comparison.
+
+   ### Key Concepts
+   1. **Mish Activation Function**:
+      - The Mish function is defined as:
+        
+        $\text{Mish}(x) = x \cdot \tanh(\text{softplus}(x))$
+        
+      - Where $\text{softplus}(x) = \ln(1 + e^x)$
+      - It provides a smooth activation with better gradient properties than ReLU.
+
+   2. **Triton Kernel for Mish**:
+      - Each program processes a block of elements, loading data from global memory, computing the Mish activation, and storing the result back to global memory.
+      - The kernel computes softplus, tanh, and their composition efficiently.
+
+   3. **CPU Implementation**:
+      - A CPU version of the Mish function is implemented for comparison with the Triton results.
+      - This helps in verifying the correctness of the Triton implementation.
+
+   4. **Performance Comparison**:
+      - Measured the execution time of both the Triton and CPU implementations.
+      - Compared the results to ensure they match and evaluated the speedup achieved by using Triton.
+
+   ### Results
+   - **Performance**
+      - Triton Execution Time: 0.004167 seconds
+      - CPU Execution Time: 0.296648 seconds
+
+
+   ### Future Work
+   - Optimize the Triton kernel for better performance.
+   - Explore other activation functions and their Triton implementations.
