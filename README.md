@@ -1770,3 +1770,44 @@ Implemented **Kullback-Leibler (KL) Divergence** using CUDA. This implementation
    ### Future Work
    - Optimize the Triton kernel for better performance.
    - Explore other activation functions and their Triton implementations.
+
+   ## Day 52
+   **File:** `triton_selu.py`
+
+   ### Summary
+   Implemented the SELU (Scaled Exponential Linear Unit) activation function using Triton. SELU is a self-normalizing activation function that induces a convergence to zero mean and unit variance for normalized inputs. This implementation includes both a Triton kernel and a CPU version for comparison.
+
+   ### Key Concepts
+   1. **SELU Activation Function**:
+      - The SELU function is defined as:
+        
+        $\text{SELU}(x) = \lambda \begin{cases} 
+        x & \text{if } x > 0 \\ 
+        \alpha (\exp(x) - 1) & \text{if } x \leq 0 
+        \end{cases}$
+        
+      - Here, $\lambda$ and $\alpha$ are predefined constants that ensure the self-normalizing property of the activation function.
+      - $\lambda = 1.0507$ and $\alpha = 1.6732$ are chosen specifically to maintain zero mean and unit variance.
+
+   2. **Triton Kernel for SELU**:
+      - Each program processes a block of elements, loading data from global memory, computing the SELU activation, and storing the result back to global memory.
+      - The kernel efficiently handles the conditional computation based on whether the input is positive or negative.
+
+   3. **CPU Implementation**:
+      - A CPU version of the SELU function is implemented for comparison with the Triton results.
+      - This helps in verifying the correctness of the Triton implementation.
+
+   4. **Performance Comparison**:
+      - Measured the execution time of both the Triton and CPU implementations.
+      - Compared the results to ensure they match and evaluated the speedup achieved by using Triton.
+
+   ### Results
+   - **Validation**: Results match! Triton implementation is correct.
+   - **Performance**
+     - Triton Execution Time: 0.005692 seconds
+     - CPU Execution Time: 2.330934 seconds
+     - Speedup: ~409x
+
+   ### Future Work
+   - Optimize the Triton kernel for better performance.
+   - Explore other self-normalizing activation functions and their Triton implementations.
