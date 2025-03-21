@@ -1811,3 +1811,45 @@ Implemented **Kullback-Leibler (KL) Divergence** using CUDA. This implementation
    ### Future Work
    - Optimize the Triton kernel for better performance.
    - Explore other self-normalizing activation functions and their Triton implementations.
+
+   ## Day 53
+   **File:** `LeakyReLU_triton.py`
+
+   ### Summary
+   Implemented the Leaky ReLU activation function using Triton. The Leaky ReLU function is a variant of ReLU that allows a small gradient for negative inputs, which helps prevent the "dying ReLU" problem. This implementation includes both a Triton kernel and a CPU version for comparison.
+
+   ### Key Concepts
+   1. **Leaky ReLU Activation Function**:
+      - The Leaky ReLU function is defined as:
+        
+        $$\text{Leaky ReLU}(x) = \begin{cases} 
+        x & \text{if } x > 0 \\
+        \alpha x & \text{if } x \leq 0 
+        \end{cases}$$
+        
+      - Here, $\alpha$ is a small constant (typically 0.01) that determines the slope of the function for negative inputs.
+      - Unlike standard ReLU which outputs zero for negative inputs, Leaky ReLU allows a small, non-zero gradient.
+
+   2. **Triton Kernel for Leaky ReLU**:
+      - Each program processes a block of elements, loading data from global memory, computing the Leaky ReLU activation, and storing the result back to global memory.
+      - The kernel efficiently handles the conditional computation based on whether the input is positive or negative.
+
+   3. **CPU Implementation**:
+      - A CPU version of the Leaky ReLU function is implemented for comparison with the Triton results.
+      - This helps in verifying the correctness of the Triton implementation.
+
+   4. **Performance Comparison**:
+      - Measured the execution time of both the Triton and CPU implementations.
+      - Compared the results to ensure they match and evaluated the speedup achieved by using Triton.
+
+   ### Results
+   - **Validation**: Results match! Triton implementation is correct.
+   - **Performance**
+     - Triton Execution Time: 0.004329 seconds
+     - CPU Execution Time: 0.922624 seconds
+     - Speedup: ~213x
+
+   ### Future Work
+   - Optimize the Triton kernel for better performance.
+   - Explore other variants of ReLU and their Triton implementations.
+   - Investigate the impact of different alpha values on model performance.
