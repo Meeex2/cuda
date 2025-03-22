@@ -1853,3 +1853,42 @@ Implemented **Kullback-Leibler (KL) Divergence** using CUDA. This implementation
    - Optimize the Triton kernel for better performance.
    - Explore other variants of ReLU and their Triton implementations.
    - Investigate the impact of different alpha values on model performance.
+
+   ## Day 54
+   **File:** `triton_kl_divergence.py`
+
+   ### Summary
+   Implemented the KL Divergence (Kullback-Leibler Divergence) using Triton. KL Divergence is a measure of how one probability distribution diverges from a second, reference probability distribution. This implementation includes both a Triton kernel and a CPU version for comparison.
+
+   ### Key Concepts
+   1. **KL Divergence**:
+      - A measure of how one probability distribution \( P \) diverges from a second, reference probability distribution \( Q \).
+      - Defined as:
+        
+        $$D_{KL}(P || Q) = \sum_{i} P(i) \cdot \log\left(\frac{P(i)}{Q(i)}\right)$$
+        
+      - Lower KL divergence indicates that the distributions are more similar.
+
+   2. **Triton Kernel for KL Divergence**:
+      - Each program processes a block of elements, loading data from global memory, computing the KL divergence contribution, and storing the partial results back to global memory.
+      - The kernel efficiently computes the logarithm and multiplication operations required for KL divergence.
+
+   3. **CPU Implementation**:
+      - A CPU version of the KL divergence function is implemented for comparison with the Triton results.
+      - This helps in verifying the correctness of the Triton implementation.
+
+   4. **Performance Comparison**:
+      - Measured the execution time of both the Triton and CPU implementations.
+      - Compared the results to ensure they match and evaluated the speedup achieved by using Triton.
+
+   ### Results
+   - **Validation**: Results match! Triton implementation is correct.
+   - **Performance**
+     - Triton Execution Time: 0.015871 seconds
+     - CPU Execution Time: 0.222043 seconds
+     - Speedup: ~14x
+
+   ### Future Work
+   - Optimize the Triton kernel for better performance.
+   - Explore applications of KL divergence in machine learning models, such as variational autoencoders and generative models.
+   - Implement other divergence measures like Jensen-Shannon divergence using Triton.
