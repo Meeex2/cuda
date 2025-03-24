@@ -1892,3 +1892,42 @@ Implemented **Kullback-Leibler (KL) Divergence** using CUDA. This implementation
    - Optimize the Triton kernel for better performance.
    - Explore applications of KL divergence in machine learning models, such as variational autoencoders and generative models.
    - Implement other divergence measures like Jensen-Shannon divergence using Triton.
+
+   ## Day 55
+   **File:** `triton_smooth_swiglu.py`
+
+   ### Summary
+   Implemented the Smooth SwiGLU (Swish Gated Linear Unit) activation function using Triton. The Smooth SwiGLU function combines the Swish activation with a gating mechanism and adds a smoothing sigmoid component. This implementation includes both a Triton kernel and a CPU version for comparison.
+
+   ### Key Concepts
+   1. **Smooth SwiGLU Activation Function**:
+      - The Smooth SwiGLU function combines the Swish activation with a gating mechanism.
+      - The formula for Smooth SwiGLU is:
+        
+        $\text{Smooth SwiGLU}(x) = \text{Swish}(x_1) \cdot x_2$
+        
+      - Where $\text{Swish}(x) = x \cdot \text{sigmoid}(x)$
+      - The input tensor is split into two halves, with the first half processed through Swish activation before being multiplied by the second half.
+
+   2. **Triton Kernel for Smooth SwiGLU**:
+      - Each program processes a block of elements, loading data from global memory, performing the Smooth SwiGLU computation, and storing the result back to global memory.
+      - The kernel first computes the Swish activation for the first half of the input tensor, then multiplies it element-wise with the second half.
+
+   3. **CPU Implementation**:
+      - A CPU version of the Smooth SwiGLU function is implemented for comparison with the Triton results.
+      - This helps in verifying the correctness of the Triton implementation.
+
+   4. **Performance Comparison**:
+      - Measured the execution time of both the Triton and CPU implementations.
+      - Compared the results to ensure they match and evaluated the speedup achieved by using Triton.
+
+   ### Results
+   - **Validation**: Results match! Triton implementation is correct.
+   - **Performance**
+     - Triton Execution Time: 0.011216 seconds
+     - CPU Execution Time: 0.208424 seconds
+     - Speedup: ~18.6x
+
+   ### Future Work
+   - Optimize the Triton kernel for better performance.
+   - Explore other activation functions and their Triton implementations.
