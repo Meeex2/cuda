@@ -1931,3 +1931,41 @@ Implemented **Kullback-Leibler (KL) Divergence** using CUDA. This implementation
    ### Future Work
    - Optimize the Triton kernel for better performance.
    - Explore other activation functions and their Triton implementations.
+
+   ## Day 56
+   **File:** `triton_batchnorm.py`
+
+   ### Summary
+   Implemented batch normalization using Triton. Batch normalization is a technique used to improve the training of deep neural networks by normalizing layer inputs. This implementation includes both a Triton kernel and a CPU version for comparison.
+
+   ### Key Concepts
+   1. **Batch Normalization**:
+      - Normalizes the input by subtracting the mean and dividing by the standard deviation, followed by scaling and shifting.
+      - The formula for batch normalization is:
+        
+        $$\text{BN}(x) = \gamma \cdot \frac{x - \mu}{\sqrt{\sigma^2 + \epsilon}} + \beta$$
+        
+      - Here, $\mu$ is the mean, $\sigma^2$ is the variance, $\epsilon$ is a small constant for numerical stability, $\gamma$ is the scale parameter, and $\beta$ is the shift parameter.
+
+   2. **Triton Kernel for Batch Normalization**:
+      - Each program processes a block of elements, loading data from global memory, performing the normalization, and storing the result back to global memory.
+      - The kernel efficiently handles the normalization process in a single pass through the data.
+
+   3. **CPU Implementation**:
+      - A CPU version of the batch normalization function is implemented for comparison with the Triton results.
+      - This helps in verifying the correctness of the Triton implementation.
+
+   4. **Performance Comparison**:
+      - Measured the execution time of both the Triton and CPU implementations.
+      - Compared the results to ensure they match and evaluated the speedup achieved by using Triton.
+
+   ### Results
+   - **Validation**: Test passed! Triton and CPU results match.
+   - **Performance**
+     - Triton Time: 0.021808 sec
+     - CPU Time: 0.554200 sec
+     - Speedup: 25.41x
+
+   ### Future Work
+   - Optimize the Triton kernel for better performance.
+   - Implement other normalization techniques using Triton.
