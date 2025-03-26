@@ -1969,3 +1969,39 @@ Implemented **Kullback-Leibler (KL) Divergence** using CUDA. This implementation
    ### Future Work
    - Optimize the Triton kernel for better performance.
    - Implement other normalization techniques using Triton.
+
+   ## Day 57
+   **File:** `triton_backward_batchnorm.py`
+
+   ### Summary
+   Implemented the backward pass for batch normalization using Triton. Batch normalization is a technique used to improve the training of deep neural networks, and its backward pass involves computing gradients with respect to the input, scale, and shift parameters. This implementation includes both forward and backward passes, with results validated against PyTorch's implementation.
+
+   ### Key Concepts
+   1. **Batch Normalization Backward Pass**:
+      - Computes gradients for the input data, scale parameter (gamma), and shift parameter (beta).
+      - The backward pass involves computing intermediate values like the gradients with respect to the normalized inputs, variance, and mean.
+
+   2. **Triton Kernel for Backward Batch Normalization**:
+      - Implements efficient parallel computation of gradients.
+      - Uses atomic operations to correctly accumulate gradients for parameters across threads.
+
+   3. **PyTorch Integration**:
+      - Implemented as a PyTorch `autograd.Function` to seamlessly integrate with PyTorch's automatic differentiation system.
+      - Allows direct comparison with PyTorch's native batch normalization implementation.
+
+   4. **Performance and Accuracy**:
+      - The implementation achieves high accuracy.
+      - Uses relaxed tolerances for validation due to floating-point precision differences.
+
+   ### Results
+
+   - **Forward diff**: 4.76837158203125e-07
+   - **dx diff**: 9.5367431640625e-07
+   - **dgamma diff**: 5.7220458984375e-06
+   - **dbeta diff**: 3.814697265625e-06
+   - All tests passed with relaxed tolerances!
+
+   ### Future Work
+   - Optimize the Triton kernel for better performance.
+   - Implement other normalization techniques and their backward passes using Triton.
+   - Explore using higher precision arithmetic for improved accuracy.
