@@ -1334,3 +1334,37 @@ Implemented **Kullback-Leibler (KL) Divergence** using CUDA. This implementation
    - Optimize the Triton kernel for even better performance.
    - Explore variants like Bilinear GLU for different applications.
    - Implement other gating mechanisms and compare their performance.
+
+   ## Day 59
+   **File:** `tanh_alpha.cu`
+
+   ### Summary
+   Implemented a parameterized hyperbolic tangent (tanh) function using CUDA. This implementation computes `tanh(alpha * x)` for each element in an array, where alpha is a scaling factor that controls the steepness of the tanh curve. Both CUDA and CPU implementations were created for performance comparison. Recent research in [Transformers without Normalization](https://arxiv.org/pdf/2503.10622) has shown that `tanh(alpha * x)` can effectively replace batch normalization layers in transformer architectures, offering similar performance while reducing computational complexity.
+
+   ### Key Concepts
+   1. **Parameterized tanh Function**:
+      - The function computes `tanh(alpha * x)` where `alpha` controls the steepness of the curve.
+      - Larger values of `alpha` make the transition between -1 and 1 sharper, which can be useful in neural networks to control how quickly the activation saturates.
+
+   2. **CUDA Kernel Implementation**:
+      - Each thread processes a single element of the input array.
+      - The kernel uses the CUDA intrinsic function `tanhf()` for efficient computation.
+
+   3. **Performance Comparison**:
+      - Measured the execution time of both the CPU and GPU implementations.
+      - Verified the correctness of results by comparing CPU and GPU outputs.
+
+   ### Results
+   - **Test Parameters**:
+     - Array size: 1,048,576 elements (1M)
+     - Alpha value: 2.0
+   - **Performance**:
+     - CPU time: 74,056 microseconds
+     - GPU time: 230 microseconds
+     - Speedup: 321.983x
+   - **Validation**: PASSED
+
+   ### Future Work
+   - Explore other parameterized activation functions and their CUDA implementations.
+   - Investigate the impact of different alpha values on neural network performance.
+   - Implement batch processing for multiple alpha values simultaneously.
