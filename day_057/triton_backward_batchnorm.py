@@ -153,10 +153,10 @@ def test_batch_norm():
     dx_cpu, dgamma_cpu, dbeta_cpu = x.grad, gamma.grad, beta.grad
 
     # Validate with relaxed tolerances
-    print("Forward diff:", (y_triton - y_cpu).abs().max().item())
-    print("dx diff:", (dx_triton - dx_cpu).abs().max().item())
-    print("dgamma diff:", (dgamma_triton - dgamma_cpu).abs().max().item())
-    print("dbeta diff:", (dbeta_triton - dbeta_cpu).abs().max().item())
+    print("Forward difference:", (y_triton - y_cpu).abs().max().item())
+    print("dx difference:", (dx_triton - dx_cpu).abs().max().item())
+    print("dgamma difference:", (dgamma_triton - dgamma_cpu).abs().max().item())
+    print("dbeta difference:", (dbeta_triton - dbeta_cpu).abs().max().item())
 
     assert torch.allclose(y_triton, y_cpu, rtol=1e-3, atol=1e-5), (
         "Forward pass mismatch"
