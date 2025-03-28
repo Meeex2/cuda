@@ -2084,3 +2084,48 @@ Implemented **Kullback-Leibler (KL) Divergence** using CUDA. This implementation
    - Explore other parameterized activation functions and their CUDA implementations.
    - Investigate the impact of different alpha values on neural network performance.
    - Implement batch processing for multiple alpha values simultaneously.
+
+
+   ## Day 60
+   **File:** `pos_enc.cu`
+
+   ### Summary
+   Implemented positional encoding using CUDA. Positional encoding is a crucial component in transformer architectures that helps the model understand the sequence order. This implementation includes both a CUDA kernel and a CPU version for comparison.
+
+   ### Key Concepts
+   1. **Positional Encoding**:
+      - Adds information about the position of tokens in a sequence to make the model aware of word order.
+      - The formula for positional encoding is:
+        
+        $$PE_{(pos, 2i)} = \sin(pos \cdot 10000^{-2i/d_{model}})$$
+        $$PE_{(pos, 2i+1)} = \cos(pos \cdot 10000^{-2i/d_{model}})$$
+        
+      - Here, $pos$ is the position in the sequence, $i$ is the dimension index, and $d_{model}$ is the model dimension.
+
+   2. **CUDA Kernel for Positional Encoding**:
+      - Each thread computes the positional encoding for a pair of dimensions (sin and cos values) at a specific position.
+      - The kernel efficiently organizes computation using 2D thread blocks, mapping to positions and dimension pairs.
+
+   3. **CPU Implementation**:
+      - A CPU version of the positional encoding function is implemented for comparison with the GPU results.
+      - This helps in verifying the correctness of the CUDA implementation.
+
+   4. **Performance Comparison**:
+      - Measured the execution time of both the CPU and GPU implementations.
+      - Compared the results to ensure they match and evaluated the speedup achieved by using the GPU.
+
+   ### Results
+   - **Test Parameters**:
+     - Sequence length: 512
+     - Model dimension: 256
+     - Total elements: 131,072
+   - **Performance**:
+     - CPU time: 2,600 microseconds
+     - GPU time: 290 microseconds
+     - Speedup: 8.97x
+   - **Validation**: PASSED
+
+   ### Future Work
+   - Optimize the CUDA kernel for better performance.
+   - Explore variations of positional encoding like relative positional encoding.
+   - Investigate the impact of different positional encoding schemes on transformer model performance.
