@@ -2129,3 +2129,45 @@ Implemented **Kullback-Leibler (KL) Divergence** using CUDA. This implementation
    - Optimize the CUDA kernel for better performance.
    - Explore variations of positional encoding like relative positional encoding.
    - Investigate the impact of different positional encoding schemes on transformer model performance.
+
+   ## Day 61
+   **File:** `glu.cu`
+
+   ### Summary
+   Implemented the Gated Linear Unit (GLU) activation function using CUDA. GLU is a neural network layer that uses a gating mechanism to control information flow. This implementation includes both a CUDA kernel and a CPU version for comparison.
+
+   ### Key Concepts
+   1. **Gated Linear Unit (GLU)**:
+      - The GLU function splits the input tensor into two parts along the feature dimension.
+      - One part is transformed through a sigmoid function to create a gate.
+      - The formula for GLU is:
+        
+        $$GLU(x) = x_1 \cdot \sigma(x_2)$$
+        
+      - Where $x_1$ and $x_2$ are the two halves of the input, and $\sigma$ is the sigmoid function.
+
+   2. **CUDA Kernel for GLU**:
+      - Implements forward pass by splitting the input tensor and applying the GLU function.
+      - Utilizes CUDA's parallel processing capabilities for efficient computation.
+
+   3. **CPU Implementation**:
+      - A CPU version of the GLU function is implemented for comparison with the GPU results.
+      - This helps in verifying the correctness of the CUDA implementation.
+
+   4. **Performance Comparison**:
+      - Measured the execution time of both the CPU and GPU implementations.
+      - Compared the results to ensure they match and evaluated the speedup achieved by using the GPU.
+
+   ### Results
+   - **Performance**:
+     - Total input elements: 1,048,576
+     - Output size: 524,288
+     - CPU time: 6,896 microseconds
+     - GPU time: 167 microseconds
+     - Speedup: 41.2934x
+   - **Validation**: Test PASSED
+
+   ### Future Work
+   - Optimize the CUDA kernel for better performance.
+   - Explore other gating mechanisms and their CUDA implementations.
+   - Validate the implementation with larger datasets and different configurations.
