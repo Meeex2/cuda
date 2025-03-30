@@ -2171,3 +2171,38 @@ Implemented **Kullback-Leibler (KL) Divergence** using CUDA. This implementation
    - Optimize the CUDA kernel for better performance.
    - Explore other gating mechanisms and their CUDA implementations.
    - Validate the implementation with larger datasets and different configurations.
+
+   ## Day 62
+   **File:** `triton_relu2.py`
+
+   ### Summary
+   Implemented the ReLU² (Squared ReLU) activation function using Triton. ReLU² squares the positive inputs while zeroing out negative values. This implementation includes both a Triton kernel and a CPU version for comparison.
+
+   ### Key Concepts
+   1. **ReLU² Activation Function**:
+      - The ReLU² function is defined as:
+        
+        $$\text{ReLU}^2(x) = \begin{cases} 
+        x^2 & \text{if } x > 0 \\ 
+        0 & \text{if } x \leq 0 
+        \end{cases}$$
+        
+      - It introduces non-linearity while maintaining a steeper gradient for positive inputs compared to standard ReLU.
+
+   2. **Triton Kernel for ReLU²**:
+      - Each program processes a block of elements, loading data from global memory, performing the ReLU² computation, and storing the result back to global memory.
+      - The kernel evaluates whether the input is positive, and if so, squares it; otherwise, it outputs zero.
+
+   3. **CPU Implementation**:
+      - A CPU version of the ReLU² function is implemented for comparison with the Triton results.
+      - This helps in verifying the correctness of the Triton implementation.
+
+   4. **Performance Comparison**:
+      - Measured the execution time of both the Triton and CPU implementations.
+      - Compared the results to ensure they match and evaluated the speedup achieved by using Triton.
+
+
+   ### Future Work
+   - Investigate the impact of ReLU² on model convergence and accuracy.
+   - Optimize the Triton kernel for better performance.
+   - Explore other activation functions and their Triton implementations.
