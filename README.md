@@ -2206,3 +2206,64 @@ Implemented **Kullback-Leibler (KL) Divergence** using CUDA. This implementation
    - Investigate the impact of ReLU² on model convergence and accuracy.
    - Optimize the Triton kernel for better performance.
    - Explore other activation functions and their Triton implementations.
+
+   ## Day 63
+   **File:** `triton_mse.py`
+
+   ### Summary
+   Implemented the Mean Squared Error (MSE) loss function using Triton. The MSE loss is a common metric used in regression tasks to measure the average squared difference between predicted and target values. This implementation includes both a Triton kernel and CPU/PyTorch versions for comparison.
+
+   ### Key Concepts
+   1. **MSE Loss Function**:
+      - The MSE loss is defined as:
+        
+        $$\text{MSE}(y_{\text{pred}}, y_{\text{true}}) = \frac{1}{n} \sum_{i=1}^{n} (y_{\text{pred},i} - y_{\text{true},i})^2$$
+        
+      - It measures the average squared difference between predictions and targets.
+
+   2. **Triton Kernel for MSE**:
+      - Each program processes a block of elements, loading data from global memory, computing the squared differences, and accumulating the results.
+      - The kernel uses atomic operations to ensure correct accumulation of partial results.
+
+   3. **Performance Comparison**:
+      - Measured the execution time of the CPU, PyTorch GPU, and Triton GPU implementations.
+      - Compared the results to ensure they match and evaluated the speedup achieved by using Triton.
+
+   4. **Validation**:
+      - Verified the correctness of the Triton implementation by comparing its results with the CPU and PyTorch GPU implementations.
+      - All implementations matched within a tolerance of \(1 \times 10^{-5}\).
+
+   ### Results
+   - **Validation Output**:
+     - CPU result: 2.0377094745635986
+     - Triton GPU result: 2.0377094745635986
+     - PyTorch GPU result: 2.0377092361450195
+     - Difference between CPU and Triton: 0.0
+     - Difference between CPU and PyTorch: \(2.384185791015625 \times 10^{-7}\)
+     - **Test passed!** All implementations match within tolerance.
+
+   - **Performance Results**:
+   ```markdown
+   | Size       | CPU (ms) | PyTorch GPU (ms) | Triton GPU (ms) | Speedup (Triton vs CPU) |
+   |------------|----------|------------------|-----------------|-------------------------|
+   | 1,000      | 0.028    | 0.027            | 0.064           | 0.4x                   |
+   | 10,000     | 0.028    | 0.027            | 0.056           | 0.5x                   |
+   | 100,000    | 0.129    | 0.035            | 0.055           | 2.3x                   |
+   | 1,000,000  | 4.372    | 0.075            | 0.057           | 76.7x                  |
+   | 10,000,000 | 54.530   | 0.638            | 0.292           | 186.6x                 |
+   ```
+
+   ### Analysis
+   - **Accuracy**:
+     - The Triton implementation produces results that are identical to the CPU implementation and very close to the PyTorch GPU implementation, with negligible differences due to floating-point precision.
+
+   - **Performance**:
+     - For smaller input sizes, the Triton implementation is slower than the CPU and PyTorch GPU implementations due to kernel launch overhead.
+     - For larger input sizes, the Triton implementation achieves significant speedups, with up to **186.6x** speedup over the CPU implementation for \(10^7\) elements.
+
+   ### Future Work
+   - Optimize the Triton kernel for smaller input sizes to reduce overhead.
+   - Explore other loss functions and their Triton implementations.
+   - Validate the implementation with larger datasets and different data types.
+   - Investigate the impact of block size and grid configuration on performance.
+   - Compare performance with other GPU-accelerated libraries for MSE loss computation.
