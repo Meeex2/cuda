@@ -109,3 +109,71 @@ def test_mse_loss():
         f"CPU and PyTorch GPU implementations differ by {diff_pytorch} (beyond tolerance {atol})"
     )
     print("Test passed! All implementations match within tolerance.")
+
+
+# Performance comparison
+def compare_performance():
+    sizes = [10**i for i in range(3, 8)]  # 1K to 100M elements
+    cpu_times = []
+    pytorch_times = []
+    triton_times = []
+
+    for size in sizes:
+        print(f"\nBenchmarking size: {size}")
+        pred = torch.randn(size, device="cuda")
+        target = torch.randn(size, device="cuda")
+
+        # First verify correctness at this size
+        cpu_val = mse_loss_cpu(pred.cpu(), target.cpu())
+        triton_val = mse_loss_gpu(pred, target)
+        if not torch.allclose(cpu_val.cuda(), triton_val, atol=1e-5):
+            print(f"Warning: Potential numerical issue at size {size}")
+            print(f"CPU: {cpu_val.item()}, Triton: {triton_val.item()}")
+
+        # CPU benchmark
+        pred_cpu = pred.cpu()
+        target_cpu = target.cpu()
+        start = time.time()
+        for _ in range(10):
+            mse_loss_cpu(pred_cpu, target_cpu)
+        cpu_time = (time.time() - start) * 1000 / 10
+        cpu_times.append(cpu_time)
+
+        # PyTorch GPU benchmark
+        pytorch_time = benchmark(torch.nn.functional.mse_loss, pred, target)
+        pytorch_times.append(pytorch_time)
+
+        # Triton benchmark
+        triton_time = benchmark(mse_loss_gpu, pred, target)
+        triton_times.append(triton_time)
+
+    # Plot results
+    plt.figure(figsize=(10, 6))
+    plt.plot(sizes, cpu_times, label="CPU")
+    plt.plot(sizes, pytorch_times, label="GPU (PyTorch)")
+    plt.plot(sizes, triton_times, label="GPU (Triton)")
+    plt.xscale("log")
+    plt.yscale("log")
+    plt.xlabel("Input size (elements)")
+    plt.ylabel("Time (ms)")
+    plt.title("MSE Loss Performance Comparison")
+    plt.legend()
+    plt.grid(True)
+    plt.savefig("mse_loss_performance.png")
+    plt.show()
+
+    # Print results
+    print("\nPerformance Results:")
+    print(
+        f"{'Size':>10} {'CPU (ms)':>10} {'PyTorch GPU (ms)':>15} {'Triton GPU (ms)':>15} {'Speedup (Triton vs CPU)':>20}"
+    )
+    for i, size in enumerate(sizes):
+        speedup = cpu_times[i] / triton_times[i]
+        print(
+            f"{size:10} {cpu_times[i]:10.3f} {pytorch_times[i]:15.3f} {triton_times[i]:15.3f} {speedup:20.1f}x"
+        )
+
+
+if __name__ == "__main__":
+    test_mse_loss()
+    compare_performance()
