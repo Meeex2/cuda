@@ -59,3 +59,19 @@ def mse_loss_gpu(predictions, targets):
     )
 
     return output
+
+
+# Benchmarking function
+def benchmark(fn, pred, target, num_warmups=10, num_iters=100):
+    # Warmup
+    for _ in range(num_warmups):
+        fn(pred, target)
+
+    # Benchmark
+    torch.cuda.synchronize()
+    start_time = time.time()
+    for _ in range(num_iters):
+        fn(pred, target)
+    torch.cuda.synchronize()
+    elapsed_ms = (time.time() - start_time) * 1000 / num_iters
+    return elapsed_ms
