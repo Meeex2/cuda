@@ -75,3 +75,37 @@ def benchmark(fn, pred, target, num_warmups=10, num_iters=100):
     torch.cuda.synchronize()
     elapsed_ms = (time.time() - start_time) * 1000 / num_iters
     return elapsed_ms
+
+
+# Test function with more detailed error reporting
+def test_mse_loss():
+    # Test data - using smaller size for easier debugging
+    size = 10000
+    pred = torch.randn(size, device="cuda")
+    target = torch.randn(size, device="cuda")
+
+    # Compute results
+    cpu_result = mse_loss_cpu(pred.cpu(), target.cpu()).cuda()
+    gpu_result = mse_loss_gpu(pred, target)
+    pytorch_result = torch.nn.functional.mse_loss(pred, target)
+
+    # Print values for debugging
+    print(f"CPU result: {cpu_result.item()}")
+    print(f"Triton GPU result: {gpu_result.item()}")
+    print(f"PyTorch GPU result: {pytorch_result.item()}")
+
+    # Calculate absolute differences
+    diff_triton = torch.abs(cpu_result - gpu_result).item()
+    diff_pytorch = torch.abs(cpu_result - pytorch_result).item()
+    print(f"Difference between CPU and Triton: {diff_triton}")
+    print(f"Difference between CPU and PyTorch: {diff_pytorch}")
+
+    # Check correctness with more relaxed tolerance
+    atol = 1e-5  # Increased tolerance for floating point differences
+    assert torch.allclose(cpu_result, gpu_result, atol=atol), (
+        f"CPU and Triton GPU implementations differ by {diff_triton} (beyond tolerance {atol})"
+    )
+    assert torch.allclose(cpu_result, pytorch_result, atol=atol), (
+        f"CPU and PyTorch GPU implementations differ by {diff_pytorch} (beyond tolerance {atol})"
+    )
+    print("Test passed! All implementations match within tolerance.")
