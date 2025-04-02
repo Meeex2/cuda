@@ -2267,3 +2267,49 @@ Implemented **Kullback-Leibler (KL) Divergence** using CUDA. This implementation
    - Validate the implementation with larger datasets and different data types.
    - Investigate the impact of block size and grid configuration on performance.
    - Compare performance with other GPU-accelerated libraries for MSE loss computation.
+
+   ## Day 64
+   **File:** `triton_triplet_loss.py`
+
+   ### Summary
+   Implemented the Triplet Loss function using Triton. Triplet Loss is commonly used in metric learning tasks to ensure that similar samples are closer in the embedding space while dissimilar samples are farther apart. This implementation includes both a Triton kernel and CPU/PyTorch versions for comparison.
+
+   ### Key Concepts
+   1. **Triplet Loss Function**:
+      - The Triplet Loss is defined as:
+        
+        $$\text{Loss} = \max(0, ||a - p||_2 - ||a - n||_2 + \text{margin})$$
+        
+      - Here:
+        - \(a\): Anchor embedding
+        - \(p\): Positive embedding (similar to anchor)
+        - \(n\): Negative embedding (dissimilar to anchor)
+        - \($\text{margin}$\): A hyperparameter that defines the minimum distance between positive and negative pairs.
+
+   2. **Triton Kernel for Triplet Loss**:
+      - Each program processes a block of triplets, loading data from global memory, computing distances, and applying the loss formula.
+      - The kernel uses efficient memory access patterns and parallelism to compute the loss for large batches of triplets.
+
+   3. **Performance Comparison**:
+      - Measured the execution time of the CPU, PyTorch GPU, and Triton GPU implementations.
+      - Compared the results to ensure they match and evaluated the speedup achieved by using Triton.
+
+   4. **Validation**:
+      - Verified the correctness of the Triton implementation by comparing its results with the CPU and PyTorch GPU implementations.
+      - All implementations matched within a tolerance of \($1 \times 10^{-7}$\).
+
+   ### Results
+   - **Validation Output**:
+     - CPU result: 1.16278874874115
+     - Triton GPU result: 1.1627888679504395
+     - PyTorch GPU result: 1.1627886295318604
+     - Difference between CPU and Triton: \(1.1920928955078125 $\times$ $10^{-7}$\)
+     - Difference between CPU and PyTorch: \(1.1920928955078125 $\times$ $10^{-7}\$)
+     - **Test passed!** All implementations match within tolerance.
+
+   ### Future Work
+   - Optimize the Triton kernel for better performance.
+   - Explore other loss functions and their Triton implementations.
+   - Validate the implementation with larger datasets and different embedding dimensions.
+   - Investigate the impact of different margin values on model performance.
+   - Compare performance with other GPU-accelerated libraries for Triplet Loss computation.
