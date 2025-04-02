@@ -2313,3 +2313,65 @@ Implemented **Kullback-Leibler (KL) Divergence** using CUDA. This implementation
    - Validate the implementation with larger datasets and different embedding dimensions.
    - Investigate the impact of different margin values on model performance.
    - Compare performance with other GPU-accelerated libraries for Triplet Loss computation.
+
+
+   ## Day 65
+   **File:** `triton_r2.py`
+
+   ### Summary
+   Implemented the R-squared (coefficient of determination) metric using Triton. R-squared is a statistical measure used to evaluate the goodness of fit of a regression model. This implementation includes both a Triton kernel and CPU/PyTorch versions for comparison.
+
+   ### Key Concepts
+   1. **R-squared Formula**:
+      - The R-squared metric is defined as:
+        
+        $$R^2 = 1 - \frac{\text{SS}_{\text{res}}}{\text{SS}_{\text{tot}}}$$
+        
+      - Where:
+        - \($\text{SS}_{\text{res}}$\): Residual sum of squares
+        - \($\text{SS}_{\text{tot}}$\): Total sum of squares
+
+   2. **Triton Kernel for R-squared**:
+      - Each program processes a block of elements, loading data from global memory, computing the residuals and total sums, and accumulating the results.
+      - The kernel uses atomic operations to ensure correct accumulation of partial results.
+
+   3. **Performance Comparison**:
+      - Measured the execution time of the CPU, PyTorch GPU, and Triton GPU implementations.
+      - Compared the results to ensure they match and evaluated the speedup achieved by using Triton.
+
+   4. **Validation**:
+      - Verified the correctness of the Triton implementation by comparing its results with the CPU and Sklearn-style implementations.
+      - All implementations matched within a tolerance of \($1 \times 10^{-7}$\).
+
+   ### Results
+   - **Validation Output**:
+     - CPU result: -1.0076630115509033
+     - Triton GPU result: -1.0076625347137451
+     - Sklearn-style result: -1.0076630115509033
+     - Difference between CPU and Triton: \($4.76837158203125 \times 10^{-7}$\)
+     - Difference between CPU and Sklearn-style: 0.0
+     - **Test passed!** All implementations match within tolerance.
+   ### Performance Results
+
+   | Size       | CPU (ms) | PyTorch GPU (ms) | Triton GPU (ms) | Speedup (Triton vs CPU) |
+   |------------|----------|------------------|-----------------|-------------------------|
+   | 1,000      | 0.062    | 0.105            | 0.167           | 0.4x                   |
+   | 10,000     | 0.087    | 0.197            | 0.265           | 0.3x                   |
+   | 100,000    | 0.271    | 0.172            | 0.286           | 0.9x                   |
+   | 1,000,000  | 10.870   | 0.251            | 0.205           | 53.1x                  |
+   | 10,000,000 | 142.884  | 1.964            | 0.443           | 322.4x                 |
+
+   ### Analysis
+   - **Accuracy**:
+     - The Triton implementation produces results that are nearly identical to the CPU and Sklearn-style implementations, with negligible differences due to floating-point precision.
+
+   - **Performance**:
+     - For smaller input sizes, the Triton implementation is slower than the CPU and PyTorch GPU implementations due to kernel launch overhead.
+     - For larger input sizes, the Triton implementation achieves significant speedups, with up to **322.4x** speedup over the CPU implementation for \(10^7\) elements.
+
+   ### Future Work
+   - Optimize the Triton kernel for smaller input sizes to reduce overhead.
+   - Investigate the numerical issue observed at smaller sizes.
+   - Explore other regression metrics and their Triton implementations.
+   - Validate the implementation with larger datasets and different data types.
+   - Investigate the impact of block size and grid configuration on performance.
