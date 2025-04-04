@@ -2433,3 +2433,45 @@ Implemented **Kullback-Leibler (KL) Divergence** using CUDA. This implementation
    - Explore other similarity metrics and their Triton implementations.
    - Validate the implementation with larger datasets and different vector dimensions.
    - Compare performance with other GPU-accelerated libraries for cosine similarity computation.
+
+   ## Day 67
+   **File:** `fisher_information.py`
+
+   ### Summary
+   Implemented the Fisher Information Matrix computation using Triton. The Fisher Information Matrix is a key concept in statistics and machine learning, used to measure the amount of information that an observable random variable carries about an unknown parameter. This implementation includes both a Triton kernel and a CPU version for comparison.
+
+   ### Key Concepts
+   1. **Fisher Information Matrix**:
+      - The Fisher Information Matrix is defined as the expected value of the outer product of gradients of the log-likelihood function:
+        
+        $$\mathcal{I}(\theta) = \mathbb{E} \left[ \nabla_\theta \log p(x|\theta) \cdot \nabla_\theta \log p(x|\theta)^T \right]$$
+        
+      - It is symmetric and positive semi-definite, and plays a crucial role in parameter estimation and uncertainty quantification.
+
+   2. **Triton Kernel for Fisher Information**:
+      - Each program processes a block of parameters, loading gradients from global memory, computing outer products, and accumulating results.
+      - The kernel uses efficient memory access patterns and parallelism to compute the Fisher Information Matrix for large parameter spaces.
+
+   3. **Performance Comparison**:
+      - Measured the execution time of the CPU and Triton GPU implementations.
+      - Compared the results to ensure they match and evaluated the speedup achieved by using Triton.
+
+   4. **Validation**:
+      - Verified the correctness of the Triton implementation by comparing its results with the CPU implementation.
+      - The kernel is correct and matches the CPU results, but it is not yet fully optimized for performance.
+
+   ### Results
+   - **Validation Output**:
+     - Max difference between CPU and GPU: \(4.77 \times 10^{-6}\)
+     - Symmetry check: PASSED
+     - **Test passed!** All implementations match within tolerance.
+
+   - **Performance Results**:
+     - CPU and GPU benchmarks were conducted for various problem sizes. Further optimization is needed to improve performance for smaller sizes.
+
+   ### Future Work
+   - Optimize the Triton kernel for better performance, especially for smaller parameter spaces.
+   - Investigate the use of shared memory and tiling to reduce global memory accesses.
+   - Validate the implementation with larger datasets and different parameter configurations.
+   - Explore applications of the Fisher Information Matrix in neural network training and uncertainty quantification.
+   - Compare performance with other GPU-accelerated libraries for Fisher Information computation.
