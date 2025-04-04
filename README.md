@@ -2375,3 +2375,61 @@ Implemented **Kullback-Leibler (KL) Divergence** using CUDA. This implementation
    - Explore other regression metrics and their Triton implementations.
    - Validate the implementation with larger datasets and different data types.
    - Investigate the impact of block size and grid configuration on performance.
+
+   ## Day 66
+   **File:** `triton_cosine_similarity.py`
+
+   ### Summary
+   Implemented the cosine similarity function using Triton. Cosine similarity is a measure of similarity between two non-zero vectors, defined as the cosine of the angle between them. This implementation includes both a Triton kernel and CPU/PyTorch versions for comparison.
+
+   ### Key Concepts
+   1. **Cosine Similarity**:
+      - The cosine similarity between two vectors \(x\) and \(y\) is defined as:
+        
+        $$\text{cosine\_similarity}(x, y) = \frac{x \cdot y}{||x|| \cdot ||y||}$$
+        
+      - It measures the cosine of the angle between the vectors, with values ranging from -1 (opposite) to 1 (identical).
+
+   2. **Triton Kernel for Cosine Similarity**:
+      - Each program processes a block of vectors, loading data from global memory, computing dot products and norms, and storing the results back to global memory.
+      - The kernel uses efficient memory access patterns and parallelism to compute cosine similarity for large batches of vectors.
+
+   3. **Performance Comparison**:
+      - Measured the execution time of the CPU, PyTorch GPU, and Triton GPU implementations.
+      - Compared the results to ensure they match and evaluated the speedup achieved by using Triton.
+
+   4. **Validation**:
+      - Verified the correctness of the Triton implementation by comparing its results with the CPU and PyTorch GPU implementations.
+      - All implementations matched within a tolerance of \(1 \times 10^{-7}\).
+
+   ### Results
+   - **Validation Output**:
+     - CPU result (first 5): `tensor([-0.0629,  0.1026,  0.0571, -0.0644, -0.0412], device='cuda:0')`
+     - Triton GPU result (first 5): `tensor([-0.0629,  0.1026,  0.0571, -0.0644, -0.0412], device='cuda:0')`
+     - PyTorch GPU result (first 5): `tensor([-0.0629,  0.1026,  0.0571, -0.0644, -0.0412], device='cuda:0')`
+     - Max difference between CPU and Triton: \(4.47 \times 10^{-8}\)
+     - Max difference between CPU and PyTorch: \(3.73 \times 10^{-8}\)
+     - **Test passed!** All implementations match within tolerance.
+   ### Performance Results
+
+   | Size         | CPU (ms) | PyTorch GPU (ms) | Triton GPU (ms) | Speedup (Triton vs CPU) |
+   |--------------|----------|------------------|-----------------|-------------------------|
+   | 100 × 256    | 0.078    | 0.145            | 0.099           | 0.8×                   |
+   | 1,000 × 256  | 1.142    | 0.198            | 0.092           | 12.5×                  |
+   | 10,000 × 256 | 5.036    | 0.503            | 0.095           | 52.7×                  |
+   | 100,000 × 256| 131.193  | 4.222            | 0.837           | 156.7×                 |
+
+   ### Analysis
+   - **Accuracy**:
+     - The Triton implementation produces results that are nearly identical to the CPU and PyTorch GPU implementations, with negligible differences due to floating-point precision.
+
+   - **Performance**:
+     - For smaller input sizes, the Triton implementation is slightly slower than the CPU and PyTorch GPU implementations due to kernel launch overhead.
+     - For larger input sizes, the Triton implementation achieves significant speedups, with up to **156.7x** speedup over the CPU implementation for \(100,000 \times 256\) vectors.
+
+   ### Future Work
+   - Optimize the Triton kernel for smaller input sizes to reduce overhead.
+   - Investigate the impact of block size and grid configuration on performance.
+   - Explore other similarity metrics and their Triton implementations.
+   - Validate the implementation with larger datasets and different vector dimensions.
+   - Compare performance with other GPU-accelerated libraries for cosine similarity computation.
