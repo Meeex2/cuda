@@ -2475,3 +2475,51 @@ Implemented **Kullback-Leibler (KL) Divergence** using CUDA. This implementation
    - Validate the implementation with larger datasets and different parameter configurations.
    - Explore applications of the Fisher Information Matrix in neural network training and uncertainty quantification.
    - Compare performance with other GPU-accelerated libraries for Fisher Information computation.
+
+   ## Day 68
+   **File:** `kurtosis.py`
+
+   ### Summary
+   Implemented the kurtosis computation using Triton. Kurtosis is a statistical measure that describes the shape of a distribution, specifically the "tailedness" of the data. This implementation includes both a Triton kernel and a CPU version for comparison.
+
+   ### Key Concepts
+   1. **Kurtosis**:
+      - Kurtosis measures the sharpness of the peak and the heaviness of the tails of a distribution.
+      - The formula for excess kurtosis is:
+        
+        $$\text{Kurtosis} = \frac{\mathbb{E}[(X - \mu)^4]}{\mathbb{E}[(X - \mu)^2]^2} - 3$$
+        
+      - Here, \( \mu \) is the mean, and the subtraction of 3 ensures the kurtosis of a normal distribution is 0 (excess kurtosis).
+
+   2. **Triton Kernels**:
+      - **Mean Kernel**: Computes the mean of the input data in parallel.
+      - **Moments Kernel**: Computes the second and fourth centered moments of the data in parallel.
+
+   3. **Performance Comparison**:
+      - Measured the execution time of the CPU and Triton GPU implementations.
+      - Compared the results to ensure they match and evaluated the speedup achieved by using Triton.
+
+   4. **Validation**:
+      - Verified the correctness of the Triton implementation by comparing its results with the CPU implementation.
+      - All implementations matched within a tolerance of \(1 \times 10^{-6}\).
+
+   ### Results
+   - **Validation Output**:
+     - CPU: -0.0078
+     - GPU: -0.0078
+     - Difference: \(1.67 \times 10^{-6}\)
+     - **Test passed!**
+
+   - **Performance**:
+     | Size         | CPU Time (ms) | GPU Time (ms) | Speedup |
+     |--------------|---------------|---------------|---------|
+     | 1,000,000    | 14.8          | 0.5           | 28.7x   |
+     | 10,000,000   | 147.6         | 0.6           | 232.5x  |
+     | 100,000,000  | 1481.1        | 3.5           | 428.3x  |
+
+   ### Future Work
+   - Optimize the Triton kernels for better performance.
+   - Explore higher-order moments and their Triton implementations.
+   - Validate the implementation with larger datasets and different distributions.
+   - Investigate the impact of kurtosis on various machine learning tasks.
+   - Compare performance with other GPU-accelerated libraries for statistical computations.
