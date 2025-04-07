@@ -2571,3 +2571,48 @@ Implemented **Kullback-Leibler (KL) Divergence** using CUDA. This implementation
    - Validate the implementation with larger datasets and different distributions.
    - Investigate the impact of skewness on various machine learning tasks.
    - Compare performance with other GPU-accelerated libraries for statistical computations.
+
+   ## Day 70
+   **File:** `fisher_information.cu`
+
+   ### Summary
+   Implemented the Fisher Information Matrix computation using CUDA. The Fisher Information Matrix is a key concept in statistics and machine learning, used to measure the amount of information that an observable random variable carries about an unknown parameter. This implementation includes both a CUDA kernel and a CPU version for comparison.
+
+   ### Key Concepts
+   1. **Fisher Information Matrix**:
+      - The Fisher Information Matrix is defined as the expected value of the outer product of gradients of the log-likelihood function:
+        
+        $$\mathcal{I}(\theta) = \mathbb{E} \left[ \nabla_\theta \log p(x|\theta) \cdot \nabla_\theta \log p(x|\theta)^T \right]$$
+        
+      - It is symmetric and positive semi-definite, and plays a crucial role in parameter estimation and uncertainty quantification.
+
+   2. **CUDA Kernel for Fisher Information**:
+      - Each thread computes one element of the Fisher Information Matrix by iterating over the samples.
+      - The kernel uses a 2D grid of threads to parallelize the computation across matrix rows and columns.
+
+   3. **Performance Comparison**:
+      - Measured the execution time of the CPU and CUDA implementations.
+      - Compared the results to ensure they match and evaluated the speedup achieved by using CUDA.
+
+   4. **Validation**:
+      - Verified the correctness of the CUDA implementation by comparing its results with the CPU implementation.
+      - All tests passed with a maximum difference of \(0.0\), indicating perfect accuracy.
+
+   ### Results
+   - **Validation Output**:
+     - Test 1000x64: Max difference = 0.000000
+     - Test 10000x128: Max difference = 0.000000
+
+   - **Performance**:
+     | Size         | CPU Time (ms) | GPU Time (ms) | Speedup |
+     |--------------|---------------|---------------|---------|
+     | 1000x64      | 5.33          | 0.49          | 11.0x   |
+     | 10000x128    | 945.87        | 3.16          | 299.6x  |
+     | 100000x256   | 93651.85      | 81.27         | 1152.3x |
+
+   ### Future Work
+   - Optimize the CUDA kernel for better performance, especially for smaller parameter spaces.
+   - Investigate the use of shared memory and tiling to reduce global memory accesses.
+   - Validate the implementation with larger datasets and different parameter configurations.
+   - Explore applications of the Fisher Information Matrix in neural network training and uncertainty quantification.
+   - Compare performance with other GPU-accelerated libraries for Fisher Information computation.
