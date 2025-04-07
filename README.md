@@ -2523,3 +2523,51 @@ Implemented **Kullback-Leibler (KL) Divergence** using CUDA. This implementation
    - Validate the implementation with larger datasets and different distributions.
    - Investigate the impact of kurtosis on various machine learning tasks.
    - Compare performance with other GPU-accelerated libraries for statistical computations.
+
+   ## Day 69
+   **File:** `skewness.py`
+
+   ### Summary
+   Implemented the skewness computation using Triton. Skewness is a statistical measure that describes the asymmetry of a distribution. This implementation includes both a Triton kernel and a CPU version for comparison.
+
+   ### Key Concepts
+   1. **Skewness**:
+      - Skewness measures the asymmetry of a distribution.
+      - The formula for skewness is:
+        
+        $$\text{Skewness} = \frac{\mathbb{E}[(X - \mu)^3]}{(\mathbb{E}[(X - \mu)^2])^{3/2}}$$
+        
+      - Here, \( \mu \) is the mean, and the numerator captures the third moment (asymmetry), while the denominator normalizes by the variance raised to the power of \(3/2\).
+
+   2. **Triton Kernel for Skewness**:
+      - **Mean Calculation**: The mean is computed on the CPU for numerical stability.
+      - **Moment Accumulation**: The kernel computes the second and third moments in parallel using atomic operations.
+      - **Final Skewness**: The skewness is computed on the GPU using the accumulated moments.
+
+   3. **Performance Comparison**:
+      - Measured the execution time of the CPU and Triton GPU implementations.
+      - Compared the results to ensure they match and evaluated the speedup achieved by using Triton.
+
+   4. **Validation**:
+      - Verified the correctness of the Triton implementation by comparing its results with the CPU implementation.
+      - All implementations matched within a tolerance of \(1 \times 10^{-4}\).
+
+   ### Results
+   - **Validation Output**:
+     - CPU: -0.003324
+     - GPU: -0.003324
+     - Difference: \(3.73 \times 10^{-9}\)
+     - **Test passed!**
+
+   - **Performance**:
+     | Size         | CPU Time (ms) | GPU Time (ms) | Speedup |
+     |--------------|---------------|---------------|---------|
+     | 1,000,000    | 10.7          | 0.6           | 17.6x   |
+     | 10,000,000   | 102.7         | 0.8           | 134.6x  |
+
+   ### Future Work
+   - Optimize the Triton kernel for better performance.
+   - Explore higher-order moments and their Triton implementations.
+   - Validate the implementation with larger datasets and different distributions.
+   - Investigate the impact of skewness on various machine learning tasks.
+   - Compare performance with other GPU-accelerated libraries for statistical computations.
