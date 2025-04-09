@@ -2616,3 +2616,43 @@ Implemented **Kullback-Leibler (KL) Divergence** using CUDA. This implementation
    - Validate the implementation with larger datasets and different parameter configurations.
    - Explore applications of the Fisher Information Matrix in neural network training and uncertainty quantification.
    - Compare performance with other GPU-accelerated libraries for Fisher Information computation.
+
+   ## Day 71
+   **File:** `naive_bayes.cu`
+
+   ### Summary
+   Implemented the Naive Bayes classifier using CUDA. This implementation includes both a CPU and GPU version for calculating class probabilities and feature probabilities. The GPU implementation leverages CUDA kernels for parallel computation, achieving significant speedup over the CPU version.
+
+   ### Key Concepts
+   1. **Naive Bayes Classifier**:
+      - A probabilistic classifier based on Bayes' theorem with the assumption of feature independence.
+      - Computes class probabilities and feature probabilities for each class.
+
+   2. **CUDA Kernels**:
+      - **Class Probabilities Kernel**: Computes the probability of each class based on the label distribution.
+      - **Feature Probabilities Kernel**: Computes the mean and variance of each feature for each class using Gaussian Naive Bayes.
+
+   3. **Performance Comparison**:
+      - Measured the execution time of the CPU and GPU implementations.
+      - Compared the results to ensure they match and evaluated the speedup achieved by using CUDA.
+
+   4. **Validation**:
+      - Verified the correctness of the GPU implementation by comparing its results with the CPU implementation.
+      - All tests passed with a maximum difference of \(0.0\), indicating perfect accuracy.
+
+   ### Results
+   - **Validation Output**:
+     - Test 1000x10x2: Max difference = 0.000000
+     - Test 10000x20x3: Max difference = 0.000000
+
+   - **Performance**:
+     | Size             | CPU Time (ms) | GPU Time (ms) | Speedup |
+     |------------------|---------------|---------------|---------|
+     | 100000x50x5      | 74.02         | 26.37         | 2.8x    |
+     | 1000000x100x10   | 2440.06       | 273.98        | 8.9x    |
+
+   ### Future Work
+   - Optimize the CUDA kernels for better performance, especially for smaller datasets.
+   - Validate the implementation with larger datasets and different feature distributions.
+   - Investigate the impact of feature scaling on classification accuracy.
+   - Compare performance with other GPU-accelerated libraries for Naive Bayes classification.
