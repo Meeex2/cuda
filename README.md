@@ -2786,3 +2786,115 @@ Implemented Random Projection using CUDA. Random Projection is a dimensionality 
 -   Explore sparse random projection matrices for efficiency.
 -   Integrate random projection into machine learning pipelines.
 
+## Day 78
+**File:** `random_walk.cu`
+
+### Summary
+Implemented basic random walks on graphs using CUDA. This involves starting walks from each node and randomly selecting neighbors at each step. The implementation uses cuRAND for random number generation on the GPU and compares performance against a CPU version.
+
+### Key Concepts
+1.  **Random Walk**: A stochastic process that describes a path consisting of a succession of random steps on a graph.
+2.  **Graph Representation**: Used Compressed Sparse Row (CSR) format to store the graph structure (nodes, edges).
+3.  **CUDA Kernel**: Each thread simulates one random walk, using cuRAND to select the next node based on neighbors' connectivity.
+4.  **Performance Comparison**: Measured execution time of CPU and GPU implementations and validated the walks.
+
+### Results
+-   **Validation**: GPU-generated walks were validated to ensure each step corresponds to a valid edge transition.
+-   **Performance**: Significant speedup observed for the GPU implementation, especially on larger graphs and with more walks.
+
+### Future Work
+-   Implement biased random walks (e.g., Node2Vec).
+-   Optimize memory access patterns in the kernel.
+-   Explore applications like node embedding and community detection.
+
+## Day 79
+**File:** `gnn.cu`
+
+### Summary
+Implemented a basic Graph Neural Network (GNN) layer using CUDA and cuBLAS. This layer performs neighbor aggregation followed by a linear transformation and ReLU activation.
+
+### Key Concepts
+1.  **GNN Layer**: A fundamental building block of GNNs, involving message passing (aggregation) and node update (transformation).
+2.  **Neighbor Aggregation**: Summing features of neighboring nodes (including self) and normalizing by degree. Implemented with a custom CUDA kernel using atomic operations.
+3.  **Linear Transformation**: Applying a weight matrix and bias to the aggregated features using cuBLAS `sgemm`.
+4.  **ReLU Activation**: Applied element-wise using a custom CUDA kernel.
+5.  **Performance Comparison**: Compared CPU and GPU implementations.
+
+### Results
+-   **Validation**: GPU results matched CPU results within tolerance.
+-   **Performance**: GPU implementation with cuBLAS showed significant speedup over the CPU version for large graphs.
+
+### Future Work
+-   Implement more complex GNN layers (GCN, GAT).
+-   Add support for different aggregation functions (mean, max).
+-   Optimize the aggregation kernel.
+
+## Day 80
+**File:** `gcn.cu`
+
+### Summary
+Implemented a Graph Convolutional Network (GCN) layer using CUDA and cuBLAS. GCN layers perform feature aggregation with specific normalization based on node degrees.
+
+### Key Concepts
+1.  **GCN Layer**: A type of GNN layer that uses symmetric normalization (\(D^{-1/2} A D^{-1/2}\)) during aggregation.
+2.  **Normalization**: Computed normalization coefficients \(1 / (\sqrt{deg(i)} \sqrt{deg(j)})\) for each edge using a CUDA kernel.
+3.  **Feature Aggregation**: Aggregated neighbor features weighted by the normalization coefficients using a custom CUDA kernel.
+4.  **Linear Transformation & ReLU**: Similar to the basic GNN, using cuBLAS `sgemm` and a custom ReLU kernel.
+5.  **Performance Comparison**: Compared CPU and GPU implementations.
+
+### Results
+-   **Validation**: GPU results matched CPU results within tolerance.
+-   **Performance**: GPU implementation demonstrated substantial speedup, benefiting from optimized cuBLAS operations and parallel aggregation.
+
+### Future Work
+-   Implement multi-layer GCNs.
+-   Explore sparse matrix multiplication libraries (cuSPARSE) for potentially better performance.
+-   Add support for different activation functions.
+
+## Day 81
+**File:** `gat.cu`
+
+### Summary
+Implemented a Graph Attention Network (GAT) layer using CUDA. GAT layers use attention mechanisms to weigh the importance of neighbors during aggregation.
+
+### Key Concepts
+1.  **GAT Layer**: Employs self-attention, allowing nodes to assign different importance scores to different neighbors.
+2.  **Multi-Head Attention**: Computes attention multiple times in parallel ("heads") and concatenates the results.
+3.  **Attention Mechanism**:
+    -   Linear transformation of node features.
+    -   Calculation of attention scores between connected nodes.
+    -   Normalization of scores using Softmax.
+    -   Weighted aggregation of neighbor features based on attention scores.
+4.  **CUDA Kernels**: Implemented separate kernels for linear transformation, attention score calculation, softmax normalization, and weighted aggregation.
+5.  **Performance Comparison**: Compared CPU and GPU implementations.
+
+### Results
+-   **Validation**: GPU results matched CPU results within tolerance.
+-   **Performance**: GPU implementation showed significant speedup, especially with multiple attention heads and large graphs.
+
+### Future Work
+-   Optimize kernels, potentially merging some steps.
+-   Implement GATv2 attention mechanism.
+-   Explore sparse implementations.
+
+## Day 82
+**File:** `node2vec.cu`
+
+### Summary
+Implemented the Node2Vec algorithm using CUDA. Node2Vec generates node embeddings by performing biased random walks on a graph and then using techniques like Skip-gram. This implementation focuses on generating the biased random walks efficiently on the GPU.
+
+### Key Concepts
+1.  **Node2Vec**: An algorithm for learning node embeddings that balances homophily and structural equivalence using biased random walks.
+2.  **Biased Random Walks**: Random walks controlled by return parameter `p` and in-out parameter `q` to guide exploration.
+3.  **Alias Sampling**: An efficient O(1) method used to sample from discrete probability distributions, applied here for selecting the next node in the biased walk. (Note: Alias table construction/sampling details were omitted in the provided code snippet but are key to Node2Vec).
+4.  **CUDA Kernel**: Each thread simulates multiple walks starting from different nodes, using cuRAND and potentially alias sampling for biased transitions.
+5.  **Performance Comparison**: Compared CPU and GPU walk generation times.
+
+### Results
+-   **Validation**: Validated that generated walks follow valid graph edges. (Full bias validation depends on the omitted alias sampling implementation).
+-   **Performance**: GPU implementation significantly accelerates the random walk generation phase, which is often the bottleneck in Node2Vec.
+
+### Future Work
+-   Complete the alias table construction and sampling implementation on the GPU.
+-   Integrate the generated walks with a Skip-gram model (e.g., using cuBLAS or other libraries) to train embeddings.
+-   Optimize the walk generation kernel further.
