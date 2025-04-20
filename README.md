@@ -2656,3 +2656,133 @@ Implemented **Kullback-Leibler (KL) Divergence** using CUDA. This implementation
    - Validate the implementation with larger datasets and different feature distributions.
    - Investigate the impact of feature scaling on classification accuracy.
    - Compare performance with other GPU-accelerated libraries for Naive Bayes classification.
+
+   ## Day 72
+**File:** `matrix_T.cu`
+
+### Summary
+Implemented matrix transposition using CUDA. This includes a naive kernel and an optimized version utilizing shared memory to improve performance by reducing global memory accesses and ensuring coalesced writes. CPU and GPU implementations were compared for correctness and speedup.
+
+### Key Concepts
+1.  **Matrix Transposition**: Swapping rows and columns of a matrix.
+2.  **Naive CUDA Kernel**: Direct mapping of elements, leading to non-coalesced writes.
+3.  **Optimized CUDA Kernel**: Uses shared memory tiling to achieve coalesced reads and writes, significantly improving performance.
+4.  **Performance Comparison**: Benchmarked CPU, naive GPU, and optimized GPU versions.
+
+### Results
+-   **Validation**: Optimized GPU implementation matched CPU results.
+-   **Performance**: The optimized kernel showed significant speedup over the naive kernel and the CPU version, especially for larger matrices.
+
+### Future Work
+-   Explore further optimizations like padding shared memory to avoid bank conflicts.
+-   Integrate transpose operation into larger linear algebra routines.
+
+## Day 73
+**File:** `skewness.cu`
+
+### Summary
+Implemented the skewness computation using CUDA. Skewness measures the asymmetry of a distribution. This implementation includes both a CUDA kernel and a CPU version for comparison, focusing on parallel reduction techniques.
+
+### Key Concepts
+1.  **Skewness**: Statistical measure of distribution asymmetry.
+2.  **CUDA Kernel**: Uses a two-pass approach (first for mean, second for centered moments) with parallel reduction in shared memory for calculating the necessary moments (mean, second moment, third moment).
+3.  **Performance Comparison**: Measured execution time of CPU and GPU implementations.
+4.  **Validation**: Compared GPU results against the CPU implementation for correctness.
+
+### Results
+-   **Validation**: GPU results matched CPU results within a small tolerance.
+-   **Performance**: Significant speedup achieved with the GPU implementation for large datasets.
+
+### Future Work
+-   Optimize the reduction kernel further.
+-   Implement calculation for higher-order moments.
+
+## Day 74
+**File:** `kurtosis.cu`
+
+### Summary
+Implemented kurtosis computation using CUDA. Kurtosis measures the "tailedness" of a distribution. This implementation includes CUDA kernels for calculating moments and a CPU version for comparison.
+
+### Key Concepts
+1.  **Kurtosis**: Statistical measure of the sharpness of the peak and heaviness of tails.
+2.  **CUDA Kernels**: Implemented a two-pass approach using parallel reduction to calculate the mean and the second, third, and fourth central moments required for kurtosis.
+3.  **Performance Comparison**: Benchmarked CPU vs. GPU execution times.
+4.  **Validation**: Ensured GPU results matched CPU results accurately.
+
+### Results
+-   **Validation**: GPU implementation passed validation against the CPU version.
+-   **Performance**: Demonstrated substantial speedup on the GPU for large input sizes.
+
+### Future Work
+-   Investigate single-pass algorithms for kurtosis calculation on the GPU.
+-   Apply kurtosis calculation in data analysis pipelines.
+
+## Day 75
+**File:** `pca.cu`
+
+### Summary
+Implemented Principal Component Analysis (PCA) using CUDA, leveraging cuBLAS and cuSOLVER libraries. PCA is a dimensionality reduction technique used to identify principal components in data.
+
+### Key Concepts
+1.  **PCA**: Dimensionality reduction by finding principal components (eigenvectors of the covariance matrix).
+2.  **CUDA Implementation**:
+    -   Data centering using cuBLAS.
+    -   Covariance matrix calculation using cuBLAS `sgemm`.
+    -   Eigenvalue decomposition using cuSOLVER `syevd`.
+3.  **Performance Comparison**: Compared the GPU implementation using CUDA libraries against a basic CPU implementation.
+4.  **Validation**: Verified the principal components and explained variance against the CPU results.
+
+### Results
+-   **Validation**: GPU results (components and variance) matched CPU results within tolerance, considering potential sign flips in eigenvectors.
+-   **Performance**: Significant speedup achieved using GPU libraries compared to the CPU implementation.
+
+### Future Work
+-   Implement PCA projection step onto principal components on the GPU.
+-   Explore incremental PCA for large datasets.
+
+## Day 76
+**File:** `correlation.cu`
+
+### Summary
+Implemented the calculation of the correlation matrix for a dataset using CUDA. The correlation matrix shows the pairwise correlation between features.
+
+### Key Concepts
+1.  **Correlation Matrix**: Measures linear relationships between pairs of variables.
+2.  **CUDA Kernels**:
+    -   Kernel to calculate the mean of each feature.
+    -   Kernel to calculate the standard deviation of each feature.
+    -   Kernel to calculate the pairwise covariances and normalize them to get correlations.
+3.  **Performance Comparison**: Measured speedup of the GPU implementation over the CPU version.
+4.  **Validation**: Compared the GPU-computed correlation matrix with the CPU version.
+
+### Results
+-   **Validation**: GPU results matched CPU results accurately.
+-   **Performance**: Achieved significant speedup with the GPU implementation, especially for datasets with many samples and features.
+
+### Future Work
+-   Optimize kernels using shared memory or parallel reduction techniques.
+-   Handle potential division by zero if standard deviation is zero.
+
+## Day 77
+**File:** `fast_rp.cu`
+
+### Summary
+Implemented Random Projection using CUDA. Random Projection is a dimensionality reduction technique, particularly useful for high-dimensional data, based on the Johnson-Lindenstrauss lemma.
+
+### Key Concepts
+1.  **Random Projection**: Reduces dimensionality by projecting data onto a lower-dimensional subspace using a random matrix.
+2.  **CUDA Implementation**:
+    -   Used cuRAND library to generate the random projection matrix (Gaussian distribution).
+    -   Implemented a kernel for the matrix multiplication (data * random\_matrix).
+    -   Scaled the random matrix according to the Johnson-Lindenstrauss lemma.
+3.  **Performance Comparison**: Compared CPU and GPU implementations.
+4.  **Validation**: Compared projected data from CPU and GPU versions (allowing for tolerance due to random nature).
+
+### Results
+-   **Validation**: GPU results were close to CPU results within the expected tolerance for random projection.
+-   **Performance**: GPU implementation showed speedup for large datasets.
+
+### Future Work
+-   Explore sparse random projection matrices for efficiency.
+-   Integrate random projection into machine learning pipelines.
+
